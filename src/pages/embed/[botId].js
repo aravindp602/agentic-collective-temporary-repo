@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { chatbotData } from '../../data/bots';
 import { useEffect, useState } from 'react';
+import { useSession, signIn } from "next-auth/react";
 import Link from 'next/link';
 
 const getBotData = (botId) => chatbotData.find(bot => bot.id === botId);
@@ -12,6 +13,7 @@ export default function EmbedPage() {
     const router = useRouter();
     const { botId } = router.query;
     const [bot, setBot] = useState(null);
+    const { data: session, status } = useSession();
 
     useEffect(() => {
         if (botId) {
@@ -19,19 +21,27 @@ export default function EmbedPage() {
         }
     }, [botId]);
 
-    // Apply a specific class to the body tag for our CSS to target
     useEffect(() => {
-        document.body.classList.add('iframe-embed-page');
-        // Cleanup function to remove the class when the user navigates away
-        return () => {
-            document.body.classList.remove('iframe-embed-page');
-        };
-    }, []);
+        // If not loading and no session, redirect them to login.
+        // After login, they will be sent back to this embed page.
+        if (status !== "loading" && !session) {
+            signIn(undefined, { callbackUrl: router.asPath });
+        }
+    }, [session, status, router]);
+    
+    // Show a loading screen while session is checked
+    if (status === "loading" || !session) {
+        return (
+            <div className="full-page-message-wrapper">
+                <p>Authenticating...</p>
+            </div>
+        );
+    }
 
     if (!bot || !bot.embedUrl) {
         return (
             <div className="full-page-message-wrapper">
-                <p>Loading Agent...</p>
+                <p>Bot not found. <Link href="/">Go back</Link></p>
             </div>
         );
     }
@@ -39,15 +49,13 @@ export default function EmbedPage() {
     return (
         <>
             <Head>
-                <title>Chat with {bot.name} | Agentic Collective</title>
-                {/* Important for mobile responsiveness with iframes */}
+                <title>Agent: {bot.name} | Agentic Collective</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
-
             <iframe 
                 src={bot.embedUrl}
                 allow="clipboard-read; clipboard-write; microphone"
-                title={bot.name} // Accessibility best practice
+                title={bot.name}
                 className="full-page-iframe"
             ></iframe>
         </>

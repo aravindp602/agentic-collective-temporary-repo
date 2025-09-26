@@ -4,20 +4,22 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { chatbotData, categories } from '../data/bots';
+import Layout from '../components/Layout'; // <-- 1. IMPORT THE LAYOUT COMPONENT
 
 export default function HomePage() {
-    const [filterKey, setFilterKey] = useState('*');
-    const [searchTerm, setSearchTerm] = useState('');
+    // This state logic is now simplified as we are not using Isotope for this example
+    const [filteredBots, setFilteredBots] = useState(chatbotData);
     const [favorites, setFavorites] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
-    const [filteredBots, setFilteredBots] = useState(chatbotData);
+    const [filterKey, setFilterKey] = useState('*');
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const savedFavorites = JSON.parse(localStorage.getItem('favoriteBots')) || [];
         setFavorites(savedFavorites);
     }, []);
-
+    
     useEffect(() => {
         const lowerSearchTerm = searchTerm.toLowerCase();
         const newFilteredBots = chatbotData.filter(bot => {
@@ -47,7 +49,8 @@ export default function HomePage() {
     const closeModal = () => { setIsModalOpen(false); };
 
     return (
-        <>
+        // 2. WRAP THE ENTIRE PAGE CONTENT IN THE <Layout> COMPONENT
+        <Layout>
             <Head>
                 <title>Agentic Collective | Explore</title>
                 <meta name="description" content="Explore a collection of 42 specialized AI agents, each designed for a unique purpose." />
@@ -171,15 +174,15 @@ export default function HomePage() {
                             <h2>{modalData.name}</h2>
                             <span className="modal-category">{modalData.category}</span>
                             <p>{modalData.description}</p>
-                            <h4>Example Prompts:</h4>
+                            {modalData.examples && modalData.examples.length > 0 && <h4>Example Prompts:</h4>}
                             <ul>
-                                {modalData.examples.map((ex, i) => <li key={i}>{ex}</li>)}
+                                {modalData.examples && modalData.examples.map((ex, i) => <li key={i}>{ex}</li>)}
                             </ul>
-                            <Link href={`/chat/${modalData.id}`} className="modal-launch-btn">Start Conversation</Link>
+                            <Link href={modalData.embedType === 'iframe' ? `/embed/${modalData.id}` : `/chat/${modalData.id}`} className="modal-launch-btn">Start Conversation</Link>
                         </div>
                     </div>
                 </div>
             )}
-        </>
+        </Layout>
     )
 }

@@ -1,0 +1,245 @@
+/* src/styles/auth.css */
+
+/* --- Attractive Full-Screen Auth Page Styles --- */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 40px 24px;
+    box-sizing: border-box;
+    background-color: var(--bg-color-dark);
+    background-image: 
+        linear-gradient(to right, var(--border-dark) 1px, transparent 1px), 
+        linear-gradient(to bottom, var(--border-dark) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    background: rgba(22, 27, 34, 0.75); /* Semi-transparent background */
+    backdrop-filter: blur(12px); /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--border-radius-lg);
+    z-index: 1;
+    overflow: hidden; /* Important for the animated border */
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Animated Gradient Border */
+.auth-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(115deg, transparent 40%, var(--brand-color), transparent 60%);
+    animation: rotateBorder 4s linear infinite;
+    z-index: -1;
+}
+
+@keyframes rotateBorder {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+.auth-box-content {
+    padding: 40px;
+}
+
+.auth-box .logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text-primary-dark);
+    display: block;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.auth-box h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: var(--text-primary-dark);
+    text-align: center;
+}
+
+.auth-box p {
+    color: var(--text-secondary-dark);
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.social-logins {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.social-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-dark);
+    background-color: rgba(33, 38, 45, 0.8);
+    color: var(--text-primary-dark);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+.social-login-btn:hover {
+    border-color: var(--text-secondary-dark);
+    background-color: var(--bg-color-dark);
+}
+.social-login-btn img {
+    width: 20px;
+    height: 20px;
+}
+.social-login-btn.github img {
+    filter: invert(1);
+}
+
+.auth-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-secondary-dark);
+    margin: 32px 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+.auth-separator::before, .auth-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-dark);
+}
+.auth-separator:not(:empty)::before { margin-right: .75em; }
+.auth-separator:not(:empty)::after { margin-left: .75em; }
+
+.credentials-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.form-field {
+    position: relative; /* Needed for animated labels and password toggle */
+}
+
+.form-field label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary-dark);
+    display: block;
+}
+
+/* Animated Label Styles */
+.form-field.animated-label label {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all 0.2s ease-out;
+    background-color: var(--bg-color-dark);
+    padding: 0 4px;
+}
+.form-field.animated-label input:focus + label,
+.form-field.animated-label input:not(:placeholder-shown) + label {
+    top: 0;
+    left: 12px;
+    font-size: 0.8rem;
+    color: var(--accent-dark);
+}
+
+.credentials-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 16px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-dark);
+    background-color: var(--bg-color-dark);
+    color: var(--text-primary-dark);
+    font-family: var(--font-family);
+    font-size: 1rem;
+    transition: all var(--transition-speed);
+}
+.credentials-form input:focus {
+    outline: none;
+    border-color: var(--accent-dark);
+    box-shadow: 0 0 0 4px var(--brand-glow);
+}
+
+.credentials-form .cta-button {
+    width: 100%;
+    margin-top: 8px;
+    background-color: var(--brand-color);
+    color: #cf3222;
+    border: none;
+}
+.credentials-form .cta-button:hover {
+    background-color: var(--brand-color-dark);
+}
+
+.auth-footer-text {
+    margin-top: 32px;
+    font-size: 0.9rem;
+    color: var(--text-secondary-dark);
+    text-align: center;
+}
+.auth-footer-text a {
+    color: var(--accent-dark);
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth-footer-text a:hover {
+    text-decoration: underline;
+}
+
+.auth-error {
+    color: var(--brand-color);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+/* Password Toggle Button */
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary-dark);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Magic Link Button */
+.magic-link-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--accent-dark);
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 16px;
+    padding: 8px;
+}
+.magic-link-btn:hover {
+    text-decoration: underline;
+}
