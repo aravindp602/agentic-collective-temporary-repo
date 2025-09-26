@@ -44,6 +44,7 @@ export default function ProfileSection() {
         }
     };
 
+    // --- THIS IS THE MODIFIED FUNCTION FOR VERCEL BLOB ---
     const handleCropAndUpload = () => {
         if (!completedCrop || !imgRef.current) return;
 
@@ -59,20 +60,32 @@ export default function ProfileSection() {
         setCropModalOpen(false);
 
         canvas.toBlob(async (blob) => {
-            const formData = new FormData();
-            formData.append('image', blob, 'profile-picture.jpg');
+            if (!blob) {
+                toast.error("Failed to process the image. Please try again.");
+                return;
+            }
+
             const toastId = toast.loading('Uploading picture...');
             try {
+                // We send the raw blob data in the body and the filename in the headers.
+                // This is the format expected by our updated Vercel Blob API route.
                 const response = await fetch('/api/user/update-profile', {
                     method: 'POST',
-                    body: formData,
+                    headers: {
+                        'Content-Type': blob.type, // e.g., 'image/jpeg'
+                        'x-vercel-blob-filename': 'profile-picture.jpg',
+                    },
+                    body: blob,
                 });
+
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.message);
                 
+                // Update the session with the new image URL from the API response
                 await update({ image: data.user.image });
                 toast.success('Profile picture updated!', { id: toastId });
-            } catch (error) {
+            } catch (error)
+             {
                 toast.error(error.message || 'Upload failed.', { id: toastId });
             }
         }, 'image/jpeg');
