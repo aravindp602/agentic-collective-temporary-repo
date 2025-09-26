@@ -27,54 +27,48 @@ export const authOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (!user || !user.password) {
-          throw new Error('No user found or account created with a provider.');
-        }
-
+      async authorize(credentials) {
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+        if (!user || !user.password) throw new Error('Invalid credentials.');
         const isValid = await compare(credentials.password, user.password);
-        if (!isValid) {
-          throw new Error('Incorrect password.');
-        }
-
+        if (!isValid) throw new Error('Invalid credentials.');
         return user;
       }
     })
   ],
 
+  // Use the stateless JWT strategy
   session: {
     strategy: "jwt",
   },
 
-  // --- THIS IS THE KEY UPDATE ---
+  // This callback is essential for putting the user's ID and image into the token,
+  // and for handling manual session updates.
   callbacks: {
-    // This callback now handles both initial sign-in and manual session updates
     async jwt({ token, user, trigger, session }) {
       // Handle the trigger for session updates (e.g., after profile picture change)
-      if (trigger === "update" && session?.image) {
-        token.picture = session.image;
+      if (trigger === "update" && session) {
+        if (session.name) token.name = session.name;
+        if (session.image) token.picture = session.image;
       }
 
       // Handle the initial sign-in
       if (user) {
         token.id = user.id;
         token.picture = user.image;
+        token.name = user.name;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
+      if (session.user) {
         session.user.id = token.id;
-        session.user.image = token.picture; // This will now have the updated image
+        session.user.image = token.picture;
+        session.user.name = token.name;
       }
       return session;
     },
   },
-  // --- END OF UPDATE ---
 
   pages: {
     signIn: '/login',

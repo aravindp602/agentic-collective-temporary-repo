@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from 'react';
 
-// 1. ACCEPT THE `theme` AND `toggleTheme` PROPS
 export default function Header({ theme, toggleTheme }) {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -51,9 +50,7 @@ export default function Header({ theme, toggleTheme }) {
           </nav>
           
           <div className="header-actions">
-            {/* 2. ADD THE ONCLICK HANDLER TO THE BUTTON */}
             <button onClick={toggleTheme} className="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-                {/* 3. USE THE THEME STATE TO DECIDE WHICH ICON TO SHOW */}
                 {theme === 'light-mode' ? (
                   <span className="sun-icon">☀️</span>
                 ) : (
@@ -67,7 +64,19 @@ export default function Header({ theme, toggleTheme }) {
               ) : isLoggedIn ? (
                 <div className="profile-menu" ref={dropdownRef}>
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="avatar-button">
-                    <img src={session.user.image} alt={session.user.name} className="avatar" />
+                    
+                    {/* --- THIS IS THE KEY FIX --- */}
+                    {session.user.image ? (
+                        // If an image exists, show it
+                        <img src={session.user.image} alt={session.user.name} className="avatar" />
+                    ) : (
+                        // Otherwise, show the placeholder with the user's initial
+                        <div className="avatar-placeholder">
+                            {session.user.name?.charAt(0)}
+                        </div>
+                    )}
+                    {/* --- END OF FIX --- */}
+
                   </button>
                   {isDropdownOpen && (
                     <div className="dropdown-menu">

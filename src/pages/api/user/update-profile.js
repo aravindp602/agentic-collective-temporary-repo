@@ -1,30 +1,22 @@
 // src/pages/api/user/update-profile.js
 
-import { getSession } from 'next-auth/react';
+import { getToken } from 'next-auth/jwt';
 import { PrismaClient } from '@prisma/client';
 import { Formidable } from 'formidable';
 import path from 'path';
 import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
+const secret = process.env.NEXTAUTH_SECRET;
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export const config = { api: { bodyParser: false } };
 
 const readFile = (req) => {
   const options = {
     uploadDir: path.join(process.cwd(), "/public/uploads"),
-    filename: (name, ext, path, form) => {
-      return Date.now().toString() + "_" + name + ext;
-    },
-    maxFileSize: 5 * 1024 * 1024, // 5MB limit
+    filename: (name, ext, path, form) => Date.now().toString() + "_" + name + ext,
   };
-  
   const form = new Formidable(options);
-  
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) reject(err);
@@ -34,8 +26,11 @@ const readFile = (req) => {
 };
 
 export default async function handler(req, res) {
-  const session = await getSession({ req });
-  if (!session || !session.user) {
+  // Manually decode and verify the token from the request cookies
+  const token = await getToken({ req, secret });
+
+  if (!token) {
+    // If the token is invalid or not present, return unauthorized
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
@@ -45,28 +40,22 @@ export default async function handler(req, res) {
 
   try {
     await fs.mkdir(path.join(process.cwd(), "/public/uploads"), { recursive: true });
-    
     const { files } = await readFile(req);
     const uploadedFile = files.image?.[0];
-
     if (!uploadedFile) {
         return res.status(400).json({ message: 'No image file uploaded.' });
     }
-    
     const relativePath = path.join('/uploads', uploadedFile.newFilename);
 
+    // Use the user's email from the validated token to find and update the user
     const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
-        image: relativePath,
-      },
+      where: { email: token.email },
+      data: { image: relativePath },
     });
-
-    // CRITICAL: Return the updated user object with the new image path
-    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
-
+    
+    // Send back the updated user object so the client can refresh its session
+    res.status(200).json({ message: 'Profile updated', user: updatedUser });
   } catch (error) {
-    console.error('Error updating profile:', error);
-    res.status(500).json({ message: 'Something went wrong on the server.' });
+    res.status(500).json({ message: 'Something went wrong.' });
   }
 }
