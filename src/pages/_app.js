@@ -1,18 +1,20 @@
 // src/pages/_app.js
 
-// Import the main stylesheet globally for all pages
 import '../styles/style.css';
-
-// Import the auth-specific stylesheet globally as well
-// Next.js is smart enough to bundle these efficiently.
 import '../styles/auth.css';
 
 import { SessionProvider } from "next-auth/react";
+import { AnimatePresence } from 'framer-motion'; // <-- IMPORT
+import { useRouter } from 'next/router';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const router = useRouter();
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      {/* WRAP THE COMPONENT */}
+      <AnimatePresence mode="wait" initial={false}>
+        <Component {...pageProps} key={router.asPath} />
+      </AnimatePresence>
     </SessionProvider>
   );
 }

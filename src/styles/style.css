@@ -838,3 +838,239 @@ body.dark-mode .category-tag {
 }
 
 
+/* --- ENHANCEMENT: Animated Gradient Border --- */
+.search-input:focus, .chatbot-card:hover {
+    position: relative;
+    /* The border color is now controlled by the animated gradient */
+    border-color: transparent; 
+}
+
+.search-input:focus::before, .chatbot-card:hover::before {
+    content: '';
+    position: absolute;
+    inset: -1px; /* Covers the border area */
+    border-radius: inherit; /* Matches the parent's border-radius */
+    padding: 1px; /* Border thickness */
+    background: conic-gradient(from 0deg at 50% 50%, var(--brand-color), #8b949e, var(--brand-color));
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    z-index: -1;
+    animation: rotateBorder 3s linear infinite;
+}
+@keyframes rotateBorder {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --- ENHANCEMENT: Vanilla Tilt.js Glassmorphism Effect --- */
+/* This removes the default translateY on hover to let Tilt.js handle it */
+.chatbot-card:hover {
+    transform: none; 
+}
+.chatbot-card {
+    /* Required for the 3D effect */
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+.js-tilt-glare {
+    /* Custom styles for the glare effect */
+    border-radius: var(--border-radius-lg);
+}
+
+/* --- ENHANCEMENT: Agent Badges --- */
+.card-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 99px;
+    color: #fff;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.card-badge.new {
+    background-color: var(--accent-light);
+    box-shadow: 0 0 10px var(--accent-light);
+}
+.card-badge.popular {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    box-shadow: 0 0 10px #ffc107;
+}
+
+/* --- ENHANCEMENT: Page Transitions (using Framer Motion) --- */
+/* We will apply animation classes in the component files */
+
+/* --- UI ENHANCEMENT: "Living" Background Spotlight --- */
+.spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+        rgba(207, 50, 34, 0.1) 0%, /* Use your brand color */
+        transparent 25%
+    );
+    z-index: -1; /* Place it behind the grid but in front of the body background */
+    pointer-events: none; /* Allows clicks to go through */
+    transition: background 0.1s ease; /* Smooths the movement slightly */
+}
+
+/* --- UI ENHANCEMENT: Command Palette (cmdk) --- */
+[cmdk-overlay] {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 0.2s ease;
+}
+[cmdk-dialog] {
+    transform: translate(-50%, -50%);
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    width: 100%;
+    max-width: 640px;
+    background-color: var(--card-bg-dark);
+    border: 1px solid var(--border-dark);
+    box-shadow: var(--shadow-dark);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease, slideUp 0.3s ease;
+}
+@keyframes slideUp {
+    from { transform: translate(-50%, -45%); }
+    to { transform: translate(-50%, -50%); }
+}
+[cmdk-input] {
+    font-family: var(--font-family);
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 20px;
+    border: none;
+    border-bottom: 1px solid var(--border-dark);
+    background-color: transparent;
+    color: var(--text-primary-dark);
+    outline: none;
+}
+[cmdk-list] {
+    height: min(300px, calc(var(--cmdk-list-height)));
+    max-height: 400px;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+[cmdk-item] {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary-dark);
+    font-weight: 500;
+}
+[cmdk-item] svg {
+    width: 18px;
+    height: 18px;
+}
+[cmdk-item][aria-selected="true"] {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary-dark);
+}
+[cmdk-empty] {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-secondary-dark);
+}
+
+/* --- UI ENHANCEMENT: Featured Agent Section --- */
+.featured-agent-section {
+    padding: 100px 0;
+}
+.featured-agent-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    align-items: center;
+    gap: 80px;
+}
+.featured-agent-icon-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Creates a square aspect ratio */
+}
+.featured-agent-icon {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.8;
+}
+.featured-agent-icon-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--brand-glow) 0%, transparent 70%);
+    z-index: -1;
+    animation: pulse 4s infinite ease-in-out;
+}
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.7; }
+}
+.featured-agent-content h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--brand-color);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+.featured-agent-content h2 {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 24px;
+}
+.featured-agent-content p {
+    font-size: 1.1rem;
+    color: var(--text-secondary-light);
+    line-height: 1.6;
+    max-width: 500px;
+    margin-bottom: 32px;
+}
+body.dark-mode .featured-agent-content p {
+    color: var(--text-secondary-dark);
+}
+
+/* --- UI ENHANCEMENT: Custom Scrollbar --- */
+body::-webkit-scrollbar {
+    width: 10px;
+}
+body::-webkit-scrollbar-track {
+    background: var(--bg-color-light);
+}
+body::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+    border: 3px solid var(--bg-color-light);
+}
+body.dark-mode::-webkit-scrollbar-track {
+    background: var(--bg-color-dark);
+}
+body.dark-mode::-webkit-scrollbar-thumb {
+    background-color: #2a2a2a;
+    border-color: var(--bg-color-dark);
+}
+
+/* --- UI ENHANCEMENT: Button Micro-interactions --- */
+.cta-button:active, .filter-btn:active, .launch-link:active, .details-link:active {
+    transform: scale(0.97) translateY(1px);
+    transition: transform 0.1s ease;
+}

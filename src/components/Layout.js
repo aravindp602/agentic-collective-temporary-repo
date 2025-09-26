@@ -2,14 +2,29 @@
 
 import Header from './Header';
 import Footer from './Footer';
+import CommandPalette from './CommandPalette'; // <-- IMPORT
 import { useState, useEffect } from 'react';
-import { Toaster } from 'react-hot-toast'; // <-- 1. IMPORT THE TOASTER
+import { Toaster } from 'react-hot-toast';
+
+// New Spotlight Component
+function Spotlight() {
+  useEffect(() => {
+    const handler = (e) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    };
+    window.addEventListener('mousemove', handler);
+    return () => window.removeEventListener('mousemove', handler);
+  }, []);
+
+  return <div className="spotlight"></div>;
+}
 
 export default function Layout({ children }) {
   const [theme, setTheme] = useState('light-mode');
+  const [isPaletteOpen, setPaletteOpen] = useState(false); // <-- STATE FOR PALETTE
 
   useEffect(() => {
-    // Set a default theme on the first load if nothing is saved
     const savedTheme = localStorage.getItem('theme') || 'light-mode';
     setTheme(savedTheme);
     document.body.className = savedTheme;
@@ -24,7 +39,6 @@ export default function Layout({ children }) {
 
   return (
     <>
-      {/* 2. ADD THE TOASTER COMPONENT HERE */}
       <Toaster 
         position="bottom-right"
         toastOptions={{
@@ -35,8 +49,9 @@ export default function Layout({ children }) {
           },
         }}
       />
+      <Spotlight /> {/* <-- ADD SPOTLIGHT */}
+      <CommandPalette open={isPaletteOpen} setOpen={setPaletteOpen} /> {/* <-- ADD PALETTE */}
       <div className="background-grid"></div>
-      {/* 3. PASS THEME AND TOGGLE FUNCTION TO THE HEADER */}
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
         {children}
