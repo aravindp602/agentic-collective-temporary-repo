@@ -1226,3 +1226,180 @@ body.dark-mode .form-field-inline input {
     font-size: 1.2rem;
     border-width: 2px;
 }
+
+
+/*
+================================================
+17. Responsive Design Adjustments (UPDATED)
+================================================
+*/
+
+/* --- Header & Mobile Navigation --- */
+.hamburger-btn {
+    display: none; /* Hidden by default */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001; /* Above the header */
+}
+
+.hamburger-icon {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--text-primary-light);
+    position: relative;
+    transition: background-color 0.2s ease-in-out;
+}
+body.dark-mode .hamburger-icon {
+    background-color: var(--text-primary-dark);
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: inherit;
+    transition: transform 0.3s ease-in-out;
+}
+
+.hamburger-icon::before {
+    top: -8px;
+}
+.hamburger-icon::after {
+    bottom: -8px;
+}
+
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--header-bg-light);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+body.dark-mode .mobile-nav {
+    background: var(--header-bg-dark);
+}
+
+.mobile-nav.is-open {
+    transform: translateX(0);
+}
+
+.mobile-nav nav {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+}
+
+.mobile-nav nav a {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.mobile-nav.is-open + .main-header .hamburger-icon {
+    background-color: transparent; /* Middle bar disappears */
+}
+
+.mobile-nav.is-open + .main-header .hamburger-icon::before {
+    transform: translateY(8px) rotate(45deg);
+}
+.mobile-nav.is-open + .main-header .hamburger-icon::after {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* --- Tablet Breakpoint (~1024px) --- */
+@media (max-width: 1024px) {
+    .chatbot-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* --- Mobile Breakpoint (~900px) --- */
+@media (max-width: 900px) {
+    .desktop-nav {
+        display: none; /* Hide desktop nav */
+    }
+    .hamburger-btn {
+        display: block; /* Show hamburger button */
+    }
+
+    .hero-layout {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+    .hero-showcase {
+        display: none;
+    }
+    .hero-content {
+        text-align: center;
+    }
+    .hero-title {
+        font-size: clamp(2.5rem, 10vw, 3.5rem);
+    }
+    .hero-subtitle {
+        margin: 0 auto 40px auto;
+    }
+
+    .featured-agent-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+    .featured-agent-icon-wrapper {
+        width: 60%;
+        padding-top: 60%;
+        margin: 0 auto;
+    }
+}
+
+/* --- Small Mobile Breakpoint (~768px) --- */
+@media (max-width: 768px) {
+    .chatbot-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-section-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .search-and-filters {
+        margin-bottom: 40px;
+    }
+    .category-filters {
+        gap: 8px;
+    }
+    .filter-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+    
+    .auth-container {
+        padding: 20px;
+    }
+    .auth-box-content {
+        padding: 24px;
+    }
+}
