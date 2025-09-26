@@ -44,7 +44,6 @@ export default function ProfileSection() {
         }
     };
 
-    // --- THIS IS THE MODIFIED FUNCTION, NOW USING FORMDATA ---
     const handleCropAndUpload = () => {
         if (!completedCrop || !imgRef.current) return;
 
@@ -65,16 +64,11 @@ export default function ProfileSection() {
                 return;
             }
 
-            // Create a FormData object to wrap the file data.
             const formData = new FormData();
-            // Append the blob with the key 'image', which our backend expects.
             formData.append('image', blob, 'profile-picture.jpg');
 
             const toastId = toast.loading('Uploading picture...');
             try {
-                // Send the FormData object in the body.
-                // It's crucial NOT to set the 'Content-Type' header here,
-                // as the browser will do it automatically with the correct boundary.
                 const response = await fetch('/api/user/update-profile', {
                     method: 'POST',
                     body: formData,
@@ -120,7 +114,7 @@ export default function ProfileSection() {
                         <div className="avatar-placeholder">{userInitial}</div>
                     )}
                     <input type="file" ref={fileInputRef} onChange={onSelectFile} style={{ display: 'none' }} accept="image/png, image/jpeg, image/webp" />
-                    <button className="upload-btn" onClick={() => fileInput.current.click()} title="Upload new picture" style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--card-bg-dark)', border: '1px solid var(--border-dark)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px' }}>✏️</button>
+                    <button className="upload-btn" onClick={() => fileInputRef.current.click()} title="Upload new picture" style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--card-bg-dark)', border: '1px solid var(--border-dark)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px' }}>✏️</button>
                 </div>
                 <div className="profile-details">
                     <div className="profile-header">

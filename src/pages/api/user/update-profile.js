@@ -40,15 +40,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'No image file uploaded.' });
     }
 
-    // Read the file from its temporary path
+    // Read the file from its temporary path on the Vercel server
     const fileData = await fs.readFile(imageFile.filepath);
 
-    // Upload the file buffer to Vercel Blob
+    // Upload the file's data (buffer) to Vercel Blob
     const blob = await put(imageFile.originalFilename || 'profile-picture.jpg', fileData, {
       access: 'public',
     });
     
-    // Delete the temporary file
+    // Delete the temporary file from the server
     await fs.unlink(imageFile.filepath);
 
     const updatedUser = await prisma.user.update({
