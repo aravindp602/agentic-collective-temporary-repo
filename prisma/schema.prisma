@@ -21,6 +21,8 @@ model User {
   password      String?
   accounts      Account[]
   sessions      Session[]
+  passwordResetToken   String?   @unique
+  passwordResetExpires DateTime?
 }
 
 model Account {

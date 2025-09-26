@@ -106,7 +106,6 @@ export default function LoginPage() {
     };
   }, []);
 
-  // --- THIS FUNCTION WAS MISSING ---
   const handleCredentialsSignIn = async (e) => {
     e.preventDefault();
     setError(null);
@@ -176,8 +175,13 @@ export default function LoginPage() {
                   <button type="button" onClick={handleMagicLinkSignIn} className="magic-link-btn">Email me a Magic Link</button>
                 </form>
                 
+                {/* --- THIS IS THE NEWLY ADDED SECTION --- */}
+                <div className="auth-footer-text" style={{ marginTop: '16px', marginBottom: '-16px' }}>
+                    <Link href="/forgot-password">Forgot Password?</Link>
+                </div>
+                
                 <div className="auth-footer-text anim-fade-in" style={{ animationDelay: '0.7s' }}>
-                    Do not have an account? <Link href="/signup">Sign up</Link>
+                    Don't have an account? <Link href="/signup">Sign up</Link>
                 </div>
             </div>
           </div>
