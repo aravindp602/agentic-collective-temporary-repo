@@ -4,31 +4,54 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { chatbotData, categories } from '../data/bots';
-import Layout from '../components/Layout'; // <-- 1. IMPORT THE LAYOUT COMPONENT
+import Layout from '../components/Layout';
+import toast from 'react-hot-toast'; // <-- 1. IMPORT TOAST
+
+// A new component for the skeleton card
+const SkeletonCard = () => (
+    <div className="chatbot-card is-loading">
+        <div className="card-content">
+            <div className="card-header">
+                <div className="card-icon-wrapper skeleton"></div>
+                <div className="skeleton skeleton-title"></div>
+            </div>
+            <div className="skeleton skeleton-text"></div>
+            <div className="skeleton skeleton-text skeleton-text-short"></div>
+            <div className="skeleton skeleton-footer"></div>
+        </div>
+    </div>
+);
 
 export default function HomePage() {
-    // This state logic is now simplified as we are not using Isotope for this example
-    const [filteredBots, setFilteredBots] = useState(chatbotData);
+    const [filteredBots, setFilteredBots] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [filterKey, setFilterKey] = useState('*');
     const [searchTerm, setSearchTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(true); // <-- 2. ADD LOADING STATE
 
     useEffect(() => {
-        const savedFavorites = JSON.parse(localStorage.getItem('favoriteBots')) || [];
-        setFavorites(savedFavorites);
+        // Simulate a network request to make the skeleton more visible
+        setTimeout(() => {
+            const savedFavorites = JSON.parse(localStorage.getItem('favoriteBots')) || [];
+            setFavorites(savedFavorites);
+            setFilteredBots(chatbotData);
+            setIsLoading(false); // <-- 3. TURN OFF LOADING
+        }, 500); // 0.5 second delay
     }, []);
     
     useEffect(() => {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        const newFilteredBots = chatbotData.filter(bot => {
-            const matchesCategory = filterKey === '*' || bot.category === filterKey;
-            const matchesSearch = bot.name.toLowerCase().includes(lowerSearchTerm) || bot.description.toLowerCase().includes(lowerSearchTerm);
-            return matchesCategory && matchesSearch;
-        });
-        setFilteredBots(newFilteredBots);
-    }, [filterKey, searchTerm]);
+        if (!isLoading) { // Don't filter while the initial data is loading
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            const newFilteredBots = chatbotData.filter(bot => {
+                const matchesCategory = filterKey === '*' || bot.category === filterKey;
+                const matchesSearch = bot.name.toLowerCase().includes(lowerSearchTerm) || bot.description.toLowerCase().includes(lowerSearchTerm);
+                return matchesCategory && matchesSearch;
+            });
+            setFilteredBots(newFilteredBots);
+        }
+    }, [filterKey, searchTerm, isLoading]);
 
     const handleFilterKeyChange = (key) => () => setFilterKey(key);
     const handleSearchChange = (e) => setSearchTerm(e.target.value);
@@ -38,8 +61,10 @@ export default function HomePage() {
         let updatedFavorites;
         if (favorites.includes(botIdStr)) {
             updatedFavorites = favorites.filter(id => id !== botIdStr);
+            toast('Removed from Favorites'); // <-- 4. ADD TOAST NOTIFICATION
         } else {
             updatedFavorites = [...favorites, botIdStr];
+            toast.success('Added to Favorites!'); // <-- 4. ADD TOAST NOTIFICATION
         }
         setFavorites(updatedFavorites);
         localStorage.setItem('favoriteBots', JSON.stringify(updatedFavorites));
@@ -49,13 +74,13 @@ export default function HomePage() {
     const closeModal = () => { setIsModalOpen(false); };
 
     return (
-        // 2. WRAP THE ENTIRE PAGE CONTENT IN THE <Layout> COMPONENT
         <Layout>
             <Head>
                 <title>Agentic Collective | Explore</title>
                 <meta name="description" content="Explore a collection of 42 specialized AI agents, each designed for a unique purpose." />
             </Head>
             
+            {/* ... (Hero, Trust Bar, etc. sections remain the same) ... */}
             <section className="hero-section">
                 <div className="container hero-layout">
                     <div className="hero-content">
@@ -120,7 +145,11 @@ export default function HomePage() {
                     </div>
 
                     <div className="chatbot-grid">
-                        {filteredBots.length > 0 ? (
+                        {/* 5. USE THE isLoading STATE TO DECIDE WHAT TO RENDER */}
+                        {isLoading ? (
+                            // Show 6 skeleton cards while loading
+                            Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
+                        ) : filteredBots.length > 0 ? (
                             filteredBots.map(bot => {
                                 const launchUrl = bot.embedType === 'iframe' 
                                     ? `/embed/${bot.id}` 
@@ -134,7 +163,7 @@ export default function HomePage() {
                                             onClick={() => toggleFavorite(bot.id)}
                                             aria-label="Favorite this agent"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                                         </button>
                                         <div className="card-content">
                                             <div className="card-header">
@@ -157,6 +186,7 @@ export default function HomePage() {
                 </div>
             </section>
             
+            {/* ... (Final CTA and Modal sections remain the same) ... */}
             <div className="section-flare"></div>
             <section className="final-cta-section">
                 <div className="container">

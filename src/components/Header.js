@@ -1,3 +1,4 @@
+
 // src/components/Header.js
 
 import Link from 'next/link';
@@ -6,7 +7,8 @@ import { useRouter } from 'next/router';
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from 'react';
 
-export default function Header() {
+// 1. ACCEPT THE `theme` AND `toggleTheme` PROPS
+export default function Header({ theme, toggleTheme }) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -24,7 +26,6 @@ export default function Header() {
     };
   }, [dropdownRef]);
 
-  // This variable will be true only when the session has loaded AND contains a user.
   const isLoggedIn = status === "authenticated" && session?.user;
 
   return (
@@ -50,9 +51,14 @@ export default function Header() {
           </nav>
           
           <div className="header-actions">
-            <button className="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-                <span className="sun-icon">☀️</span>
-                <span className="moon-icon">🌙</span>
+            {/* 2. ADD THE ONCLICK HANDLER TO THE BUTTON */}
+            <button onClick={toggleTheme} className="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                {/* 3. USE THE THEME STATE TO DECIDE WHICH ICON TO SHOW */}
+                {theme === 'light-mode' ? (
+                  <span className="sun-icon">☀️</span>
+                ) : (
+                  <span className="moon-icon">🌙</span>
+                )}
             </button>
             
             <div className="auth-controls">
@@ -61,7 +67,6 @@ export default function Header() {
               ) : isLoggedIn ? (
                 <div className="profile-menu" ref={dropdownRef}>
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="avatar-button">
-                    {/* The session.user.image is now guaranteed to exist here */}
                     <img src={session.user.image} alt={session.user.name} className="avatar" />
                   </button>
                   {isDropdownOpen && (
