@@ -40,6 +40,16 @@ export const chatbotData = [
     embedUrl: 'https://workflow.getmindpal.com/rtb--reasons-to-believe--JTcQj1Q8pSXDELSn',
     isNew: true, // <-- ADDED
   },
+  {
+  id : 'Neil the creative director',
+  name : 'Neil the Creative Director',
+  category : 'Creativity',
+  icon : '/img/edit-3.svg',
+  description : 'An AI-powered creative director that helps brainstorm and refine creative concepts for marketing campaigns, branding, and content creation.',
+  embedType : 'iframe',
+  embedUrl : 'https://workflow.getmindpal.com/creative-strategy-canvas-kwOzZWvzc9nHPf0o' ,
+  isNew: true, 
+}
 ];
 
 export const categories = ["Creativity", "Technical", "Business", "Productivity", "Education"];

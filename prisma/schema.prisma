@@ -6,10 +6,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  // This is the crucial part:
-  // It tells Prisma to use the DATABASE_URL environment variable.
-  // This works both locally and in production on Vercel/Netlify.
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db" // Simple and reliable for local dev
 }
 
 model User {
@@ -18,10 +15,12 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  password      String?   // <-- THIS IS THE CRITICAL NEW FIELD
   accounts      Account[]
   sessions      Session[]
 }
 
+// ... (The Account, Session, and VerificationToken models remain the same as before)
 model Account {
   id                 String  @id @default(cuid())
   userId             String

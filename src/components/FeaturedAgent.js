@@ -5,7 +5,7 @@ import { chatbotData } from '../data/bots';
 
 export default function FeaturedAgent() {
   // We are still using the original logic of selecting the second bot.
-  const featuredBot = chatbotData[1];
+  const featuredBot = chatbotData[4];
 
   if (!featuredBot) {
     return null; // Don't render if there's no bot.
