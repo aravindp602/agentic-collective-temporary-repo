@@ -1403,3 +1403,175 @@ body.dark-mode .mobile-nav {
         padding: 24px;
     }
 }
+
+
+/*
+================================================
+18. New Dashboard Components
+================================================
+*/
+
+/* --- Dashboard Grid Layout --- */
+.dashboard-grid-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+}
+
+.dashboard-main-column .chatbot-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row in main column */
+}
+
+/* --- Stats Grid --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.stat-card {
+    background-color: var(--card-bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    text-align: center;
+}
+body.dark-mode .stat-card {
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-dark);
+}
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    color: var(--brand-color);
+}
+.stat-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+}
+body.dark-mode .stat-card p {
+    color: var(--text-secondary-dark);
+}
+
+/* --- Recent Agents List --- */
+.recent-agents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.recent-agent-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    background-color: var(--card-bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition-speed) ease;
+}
+body.dark-mode .recent-agent-item {
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-dark);
+}
+.recent-agent-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--brand-color);
+    box-shadow: 0 4px 15px var(--brand-glow);
+}
+.card-icon-wrapper.small-icon {
+    width: 36px;
+    height: 36px;
+}
+.recent-agent-details {
+    flex-grow: 1;
+}
+.recent-agent-details h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+.recent-agent-details p {
+    font-size: 0.8rem;
+    margin: 0;
+    color: var(--text-secondary-light);
+}
+body.dark-mode .recent-agent-details p {
+    color: var(--text-secondary-dark);
+}
+.launch-arrow {
+    font-size: 1.5rem;
+    color: var(--text-secondary-light);
+    transition: transform var(--transition-speed) ease;
+}
+body.dark-mode .launch-arrow {
+    color: var(--text-secondary-dark);
+}
+.recent-agent-item:hover .launch-arrow {
+    transform: translateX(4px);
+    color: var(--brand-color);
+}
+
+/* --- Responsive Adjustments for Dashboard --- */
+@media (max-width: 1024px) {
+    .dashboard-grid-layout {
+        grid-template-columns: 1fr; /* Stack columns on tablets */
+    }
+}
+@media (max-width: 768px) {
+    .dashboard-main-column .chatbot-grid {
+        grid-template-columns: 1fr; /* 1 card per row on mobile */
+    }
+}
+
+
+/*
+================================================
+19. Account Management Dashboard Component
+================================================
+*/
+
+/* --- Danger Zone Section --- */
+.danger-zone {
+    border: 1px solid #e53935; /* Red border */
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    background-color: rgba(229, 57, 53, 0.05);
+}
+
+.danger-zone h3 {
+    color: #e53935;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.danger-zone p {
+    font-size: 0.9rem;
+    color: var(--text-secondary-light);
+    margin-bottom: 16px;
+}
+body.dark-mode .danger-zone p {
+    color: var(--text-secondary-dark);
+}
+
+.danger-button {
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    font-weight: 700;
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid #e53935;
+    background-color: transparent;
+    color: #e53935;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.danger-button:hover {
+    background-color: #e53935;
+    color: #fff;
+}

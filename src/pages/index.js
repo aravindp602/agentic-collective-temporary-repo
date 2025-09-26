@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { chatbotData, categories } from '../data/bots';
 import Layout from '../components/Layout';
-import FeaturedAgent from '../components/FeaturedAgent'; // Import the new component
+import FeaturedAgent from '../components/FeaturedAgent';
 import toast from 'react-hot-toast';
 import VanillaTilt from 'vanilla-tilt';
 import { motion } from 'framer-motion';
+// --- 1. IMPORT THE NEW LOGGER FUNCTION ---
+import { logAgentActivity } from '../lib/activityLogger';
 
 // A component for the skeleton loading card
 const SkeletonCard = () => (
@@ -113,6 +115,7 @@ export default function HomePage() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
             >
+                {/* ... (hero-section, trust-bar-section, FeaturedAgent section) ... */}
                 <section className="hero-section">
                     <div className="container hero-layout">
                         <div className="hero-content">
@@ -153,13 +156,13 @@ export default function HomePage() {
                         </div>
                     </div>
                 </section>
-
-                {/* The new Featured Agent section is added here */}
+                
                 <FeaturedAgent />
 
                 <section id="gallery" className="chatbot-gallery-section">
                     <div className="container">
                         <div className="search-and-filters fade-in-on-scroll is-visible">
+                            {/* ... (search and filter inputs) ... */}
                             <div className="search-bar-wrapper">
                                 <input 
                                     type="text" 
@@ -215,7 +218,14 @@ export default function HomePage() {
                                                 <p className="card-description">{bot.description}</p>
                                                 <div className="card-footer">
                                                     <button className="details-link" onClick={() => openModal(bot)}>Details</button>
-                                                    <Link href={launchUrl} className="launch-link">Launch &rarr;</Link>
+                                                    {/* --- 2. ADD THE ONCLICK HANDLER HERE --- */}
+                                                    <Link 
+                                                        href={launchUrl} 
+                                                        className="launch-link"
+                                                        onClick={() => logAgentActivity(bot.id)}
+                                                    >
+                                                        Launch &rarr;
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -228,6 +238,7 @@ export default function HomePage() {
                     </div>
                 </section>
                 
+                {/* ... (final-cta-section and modal) ... */}
                 <div className="section-flare"></div>
                 <section className="final-cta-section">
                     <div className="container">
@@ -249,7 +260,9 @@ export default function HomePage() {
                                 <ul>
                                     {modalData.examples && modalData.examples.map((ex, i) => <li key={i}>{ex}</li>)}
                                 </ul>
-                                <Link href={modalData.embedType === 'iframe' ? `/embed/${modalData.id}` : `/chat/${modalData.id}`} className="modal-launch-btn">Start Conversation</Link>
+                                <Link href={modalData.embedType === 'iframe' ? `/embed/${modalData.id}` : `/chat/${modalData.id}`} className="modal-launch-btn" onClick={() => logAgentActivity(modalData.id)}>
+                                    Start Conversation
+                                </Link>
                             </div>
                         </div>
                     </div>
