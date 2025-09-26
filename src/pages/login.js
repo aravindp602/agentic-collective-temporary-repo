@@ -177,7 +177,7 @@ export default function LoginPage() {
                 </form>
                 
                 <div className="auth-footer-text anim-fade-in" style={{ animationDelay: '0.7s' }}>
-                    Don't have an account? <Link href="/signup">Sign up</Link>
+                    Do not have an account? <Link href="/signup">Sign up</Link>
                 </div>
             </div>
           </div>

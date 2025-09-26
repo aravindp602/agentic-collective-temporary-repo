@@ -79,7 +79,7 @@ export default function DashboardPage() {
                                 })
                             ) : (
                                 <div className="placeholder-text full-width-placeholder">
-                                    You haven't favorited any agents yet. 
+                                    You have not favorited any agents yet.
                                     <Link href="/">Explore agents</Link> to add them.
                                 </div>
                             )}
