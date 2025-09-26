@@ -9,8 +9,10 @@ import FeaturedAgent from '../components/FeaturedAgent';
 import toast from 'react-hot-toast';
 import VanillaTilt from 'vanilla-tilt';
 import { motion } from 'framer-motion';
+import AgentConstellation from '../components/AgentConstellation';
 import useMagneticEffect from '../hooks/useMagneticEffect'; // <-- IMPORT THE HOOK
 
+const [viewMode, setViewMode] = useState('constellation'); // 'constellation' or 'grid'
 // A reusable component for the favorite button with the magnetic effect
 const FavoriteButton = ({ isFavorite, onClick }) => {
   const magneticRef = useMagneticEffect(); // Apply the magnetic hook
