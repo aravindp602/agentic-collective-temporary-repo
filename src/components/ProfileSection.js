@@ -44,7 +44,7 @@ export default function ProfileSection() {
         }
     };
 
-    // --- THIS IS THE MODIFIED FUNCTION FOR VERCEL BLOB ---
+    // --- THIS IS THE MODIFIED FUNCTION, NOW USING FORMDATA ---
     const handleCropAndUpload = () => {
         if (!completedCrop || !imgRef.current) return;
 
@@ -65,27 +65,27 @@ export default function ProfileSection() {
                 return;
             }
 
+            // Create a FormData object to wrap the file data.
+            const formData = new FormData();
+            // Append the blob with the key 'image', which our backend expects.
+            formData.append('image', blob, 'profile-picture.jpg');
+
             const toastId = toast.loading('Uploading picture...');
             try {
-                // We send the raw blob data in the body and the filename in the headers.
-                // This is the format expected by our updated Vercel Blob API route.
+                // Send the FormData object in the body.
+                // It's crucial NOT to set the 'Content-Type' header here,
+                // as the browser will do it automatically with the correct boundary.
                 const response = await fetch('/api/user/update-profile', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': blob.type, // e.g., 'image/jpeg'
-                        'x-vercel-blob-filename': 'profile-picture.jpg',
-                    },
-                    body: blob,
+                    body: formData,
                 });
 
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.message);
                 
-                // Update the session with the new image URL from the API response
                 await update({ image: data.user.image });
                 toast.success('Profile picture updated!', { id: toastId });
-            } catch (error)
-             {
+            } catch (error) {
                 toast.error(error.message || 'Upload failed.', { id: toastId });
             }
         }, 'image/jpeg');
@@ -120,7 +120,7 @@ export default function ProfileSection() {
                         <div className="avatar-placeholder">{userInitial}</div>
                     )}
                     <input type="file" ref={fileInputRef} onChange={onSelectFile} style={{ display: 'none' }} accept="image/png, image/jpeg, image/webp" />
-                    <button className="upload-btn" onClick={() => fileInputRef.current.click()} title="Upload new picture" style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--card-bg-dark)', border: '1px solid var(--border-dark)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px' }}>✏️</button>
+                    <button className="upload-btn" onClick={() => fileInput.current.click()} title="Upload new picture" style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--card-bg-dark)', border: '1px solid var(--border-dark)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px' }}>✏️</button>
                 </div>
                 <div className="profile-details">
                     <div className="profile-header">

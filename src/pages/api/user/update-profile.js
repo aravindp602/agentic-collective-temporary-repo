@@ -3,15 +3,27 @@
 import { put } from '@vercel/blob';
 import { getToken } from 'next-auth/jwt';
 import { PrismaClient } from '@prisma/client';
+import { Formidable } from 'formidable';
+import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
 const secret = process.env.NEXTAUTH_SECRET;
 
-// It's important to disable the default body parser for Vercel Blob
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false, // Formidable will handle the body parsing
   },
+};
+
+// Helper to parse the incoming form data
+const readFile = (req) => {
+  return new Promise((resolve, reject) => {
+    const form = new Formidable();
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ files });
+    });
+  });
 };
 
 export default async function handler(req, res) {
@@ -20,29 +32,31 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
-  // The filename is sent via a special header from the client
-  const filename = req.headers['x-vercel-blob-filename'] || 'profile-picture.png';
-
   try {
-    // The request body is the raw file data. We upload it to Vercel Blob.
-    const blob = await put(filename, req.body, {
-      access: 'public', // Make the file publicly accessible
-    });
+    const { files } = await readFile(req);
+    const imageFile = files.image?.[0]; // The key 'image' must match FormData
 
-    // The 'blob' object contains the public URL of the uploaded file
-    // We save this URL to the user's record in the database
+    if (!imageFile) {
+      return res.status(400).json({ message: 'No image file uploaded.' });
+    }
+
+    // Read the file from its temporary path
+    const fileData = await fs.readFile(imageFile.filepath);
+
+    // Upload the file buffer to Vercel Blob
+    const blob = await put(imageFile.originalFilename || 'profile-picture.jpg', fileData, {
+      access: 'public',
+    });
+    
+    // Delete the temporary file
+    await fs.unlink(imageFile.filepath);
+
     const updatedUser = await prisma.user.update({
       where: { email: token.email },
       data: { image: blob.url },
     });
     
-    // Send back the updated user object with the new image URL
     res.status(200).json({ message: 'Profile updated', user: updatedUser });
-
   } catch (error) {
     console.error('Upload Error:', error);
     res.status(500).json({ message: 'Something went wrong.' });
