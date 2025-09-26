@@ -9,8 +9,23 @@ import FeaturedAgent from '../components/FeaturedAgent';
 import toast from 'react-hot-toast';
 import VanillaTilt from 'vanilla-tilt';
 import { motion } from 'framer-motion';
-// --- 1. IMPORT THE NEW LOGGER FUNCTION ---
-import { logAgentActivity } from '../lib/activityLogger';
+import useMagneticEffect from '../hooks/useMagneticEffect'; // <-- IMPORT THE HOOK
+
+// A reusable component for the favorite button with the magnetic effect
+const FavoriteButton = ({ isFavorite, onClick }) => {
+  const magneticRef = useMagneticEffect(); // Apply the magnetic hook
+
+  return (
+    <button
+      ref={magneticRef} // Attach the ref for GSAP to target
+      className={`favorite-btn ${isFavorite ? 'is-favorite' : ''}`}
+      onClick={onClick}
+      aria-label="Favorite this agent"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+    </button>
+  );
+};
 
 // A component for the skeleton loading card
 const SkeletonCard = () => (
@@ -115,7 +130,6 @@ export default function HomePage() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
             >
-                {/* ... (hero-section, trust-bar-section, FeaturedAgent section) ... */}
                 <section className="hero-section">
                     <div className="container hero-layout">
                         <div className="hero-content">
@@ -156,13 +170,12 @@ export default function HomePage() {
                         </div>
                     </div>
                 </section>
-                
+
                 <FeaturedAgent />
 
                 <section id="gallery" className="chatbot-gallery-section">
                     <div className="container">
                         <div className="search-and-filters fade-in-on-scroll is-visible">
-                            {/* ... (search and filter inputs) ... */}
                             <div className="search-bar-wrapper">
                                 <input 
                                     type="text" 
@@ -198,18 +211,17 @@ export default function HomePage() {
                                             className="chatbot-card" 
                                             data-category={bot.category}
                                             style={{ animationDelay: `${index * 50}ms` }}
-                                            data-tilt
+                                            data-tilt // This attribute enables the 3D tilt effect
                                         >
                                             {bot.isNew && <span className="card-badge new">New</span>}
                                             {bot.popularity > 95 && <span className="card-badge popular">Popular</span>}
 
-                                            <button 
-                                                className={`favorite-btn ${isFavorite ? 'is-favorite' : ''}`} 
+                                            {/* Use the new, interactive FavoriteButton component */}
+                                            <FavoriteButton
+                                                isFavorite={isFavorite}
                                                 onClick={() => toggleFavorite(bot.id)}
-                                                aria-label="Favorite this agent"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                                            </button>
+                                            />
+
                                             <div className="card-content">
                                                 <div className="card-header">
                                                     <div className="card-icon-wrapper"><img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" /></div>
@@ -218,14 +230,7 @@ export default function HomePage() {
                                                 <p className="card-description">{bot.description}</p>
                                                 <div className="card-footer">
                                                     <button className="details-link" onClick={() => openModal(bot)}>Details</button>
-                                                    {/* --- 2. ADD THE ONCLICK HANDLER HERE --- */}
-                                                    <Link 
-                                                        href={launchUrl} 
-                                                        className="launch-link"
-                                                        onClick={() => logAgentActivity(bot.id)}
-                                                    >
-                                                        Launch &rarr;
-                                                    </Link>
+                                                    <Link href={launchUrl} className="launch-link">Launch &rarr;</Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -238,7 +243,6 @@ export default function HomePage() {
                     </div>
                 </section>
                 
-                {/* ... (final-cta-section and modal) ... */}
                 <div className="section-flare"></div>
                 <section className="final-cta-section">
                     <div className="container">
@@ -260,9 +264,7 @@ export default function HomePage() {
                                 <ul>
                                     {modalData.examples && modalData.examples.map((ex, i) => <li key={i}>{ex}</li>)}
                                 </ul>
-                                <Link href={modalData.embedType === 'iframe' ? `/embed/${modalData.id}` : `/chat/${modalData.id}`} className="modal-launch-btn" onClick={() => logAgentActivity(modalData.id)}>
-                                    Start Conversation
-                                </Link>
+                                <Link href={modalData.embedType === 'iframe' ? `/embed/${modalData.id}` : `/chat/${modalData.id}`} className="modal-launch-btn">Start Conversation</Link>
                             </div>
                         </div>
                     </div>
