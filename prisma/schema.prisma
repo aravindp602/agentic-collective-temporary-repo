@@ -70,4 +70,5 @@ model Review {
   
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+  @@unique([userId, botId])
 }
