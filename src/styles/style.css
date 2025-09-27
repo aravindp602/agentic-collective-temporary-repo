@@ -2011,3 +2011,217 @@ body.dark-mode .favorite-agent-workspace textarea {
 .complexity-meter .bar.filled {
     background-color: var(--brand-color);
 }
+
+/*
+================================================
+26. Dedicated Agent Page
+================================================
+*/
+
+/* This makes the Link wrapping the card on the homepage behave correctly */
+.agent-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Important for layout */
+}
+
+.agent-page-container {
+    padding-top: 80px;
+    padding-bottom: 100px;
+    max-width: 1024px; /* A more constrained, focused width */
+}
+
+/* --- HEADER --- */
+.agent-page-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-light);
+}
+body.dark-mode .agent-page-header {
+    border-bottom-color: var(--border-dark);
+}
+
+.card-icon-wrapper.large-icon {
+    width: 64px; /* Slightly smaller for refinement */
+    height: 64px;
+    border-radius: var(--border-radius-md);
+    flex-shrink: 0;
+}
+.card-icon-wrapper.large-icon .card-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.agent-header-content h1 {
+    font-size: 2.5rem; /* Adjusted for balance */
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    color: var(--text-primary-light);
+}
+body.dark-mode .agent-header-content h1 {
+    color: var(--text-primary-dark);
+}
+
+.agent-category-tag {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+    background-color: var(--bg-color-light);
+    border: 1px solid var(--border-light);
+    padding: 4px 12px;
+    border-radius: 99px;
+    display: inline-block;
+}
+body.dark-mode .agent-category-tag {
+    color: var(--text-secondary-dark);
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-dark);
+}
+
+/* --- BODY LAYOUT --- */
+.agent-page-body {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 80px; /* Increased gap for more space */
+}
+
+.agent-main-content h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary-light);
+}
+body.dark-mode .agent-main-content h2 {
+    color: var(--text-primary-dark);
+}
+
+.agent-main-content p {
+    color: var(--text-secondary-light);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+body.dark-mode .agent-main-content p {
+    color: var(--text-secondary-dark);
+}
+
+.content-section {
+    margin-bottom: 40px;
+}
+
+.content-section h3 {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+body.dark-mode .content-section h3 {
+    color: var(--text-secondary-dark);
+}
+
+.use-case-tags .tag {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+    padding: 0;
+    background: none;
+    margin-right: 16px;
+}
+body.dark-mode .use-case-tags .tag {
+    color: var(--text-secondary-dark);
+}
+
+/* --- SIDEBAR --- */
+.agent-sidebar {
+    position: relative;
+}
+
+.sidebar-card {
+    background-color: var(--card-bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    position: sticky;
+    top: 120px; /* Sticky below the header */
+    box-shadow: var(--shadow-light);
+}
+body.dark-mode .sidebar-card {
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-dark);
+    box-shadow: none;
+}
+
+.launch-agent-button {
+    width: 80%;
+    text-align: center;
+    margin-bottom: 24px;
+    display: block;
+    background-color: var(--brand-color); /* Match screenshot color */
+}
+
+.sidebar-card .detail-item {
+    margin-bottom: 20px;
+}
+.sidebar-card .detail-item:last-child {
+    margin-bottom: 0;
+}
+.sidebar-card h4 {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+body.dark-mode .sidebar-card h4 {
+    color: var(--text-secondary-dark);
+}
+
+.complexity-meter .bar.filled {
+    background-color: var(--brand-color); /* Match screenshot color */
+}
+
+.related-agents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.related-agent {
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-primary-light);
+    transition: color var(--transition-speed);
+}
+.related-agent:hover {
+    color: var(--brand-color);
+}
+body.dark-mode .related-agent {
+    color: var(--text-primary-dark);
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 900px) {
+    .agent-page-body {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    .sidebar-card {
+        position: relative;
+        top: 0;
+    }
+}
+@media (max-width: 768px) {
+    .agent-page-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .agent-header-content h1 {
+        font-size: 2.25rem;
+    }
+}
