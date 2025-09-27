@@ -1922,3 +1922,92 @@ body.dark-mode .favorite-agent-workspace textarea {
 .focus-view-details li {
     margin-bottom: 8px;
 }
+
+
+/*
+================================================
+25. Enhanced UI/UX Features
+================================================
+*/
+
+/* --- 1. Shaped Skeleton Loaders --- */
+.skeleton-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-md); /* Match icon wrapper */
+    flex-shrink: 0;
+}
+.skeleton-header-text {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.skeleton-title {
+    width: 70%;
+    height: 20px;
+}
+.skeleton-text-short {
+    width: 80%;
+}
+.chatbot-card.is-loading .card-footer {
+    display: flex;
+    gap: 12px;
+}
+.skeleton-button {
+    width: 50%;
+    height: 45px;
+    border-radius: var(--border-radius-md);
+}
+
+
+/* --- 2. Dynamic Hero Subtitle --- */
+/* The TypeAnimation component will inherit the .hero-subtitle class */
+.hero-subtitle {
+    min-height: 50px; /* Prevent layout shift as text changes */
+}
+
+/* --- 3. Enhanced Focus View Details --- */
+.focus-view-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-dark);
+}
+.detail-item h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: var(--text-secondary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.use-case-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.tag {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary-dark);
+}
+
+.complexity-meter {
+    display: flex;
+    gap: 4px;
+    height: 8px;
+}
+.complexity-meter .bar {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+}
+.complexity-meter .bar.filled {
+    background-color: var(--brand-color);
+}
