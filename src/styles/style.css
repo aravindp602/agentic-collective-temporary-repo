@@ -1647,4 +1647,121 @@ body.light-mode .spotlight {
     transition: transform 0.1s ease;
 }
 
+/*
+================================================
+23. Personal Notes Workspace
+================================================
+*/
 
+.favorite-agents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.favorite-agent-item {
+    background-color: var(--card-bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-lg);
+    transition: all var(--transition-speed) ease;
+    overflow: hidden;
+}
+body.dark-mode .favorite-agent-item {
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-dark);
+}
+
+.favorite-agent-item.active {
+    border-color: var(--brand-color);
+    box-shadow: 0 4px 20px var(--brand-glow);
+}
+
+.favorite-agent-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.favorite-agent-details {
+    flex-grow: 1;
+}
+.favorite-agent-details h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: var(--text-primary-light);
+}
+body.dark-mode .favorite-agent-details h3 {
+    color: var(--text-primary-dark);
+}
+.favorite-agent-details p {
+    font-size: 0.9rem;
+    margin: 0;
+    color: var(--text-secondary-light);
+}
+body.dark-mode .favorite-agent-details p {
+    color: var(--text-secondary-dark);
+}
+
+.expand-arrow {
+    font-size: 1rem;
+    color: var(--text-secondary-light);
+    transition: transform 0.3s ease;
+}
+.favorite-agent-item.active .expand-arrow {
+    transform: rotate(180deg);
+}
+
+.favorite-agent-workspace {
+    padding: 0 20px 20px 20px;
+    border-top: 1px solid var(--border-light);
+    animation: fadeIn 0.5s ease;
+}
+body.dark-mode .favorite-agent-workspace {
+    border-top-color: var(--border-dark);
+}
+.favorite-agent-workspace h4 {
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+.favorite-agent-workspace textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    background-color: var(--bg-color-light);
+    color: var(--text-primary-light);
+    resize: vertical;
+}
+body.dark-mode .favorite-agent-workspace textarea {
+    border-color: var(--border-dark);
+    background-color: var(--bg-color-dark);
+    color: var(--text-primary-dark);
+}
+.favorite-agent-workspace textarea:focus {
+    outline: none;
+    border-color: var(--brand-color);
+    box-shadow: 0 0 0 4px var(--brand-glow);
+}
+
+.workspace-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.workspace-actions .cta-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}

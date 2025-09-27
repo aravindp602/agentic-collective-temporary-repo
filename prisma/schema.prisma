@@ -23,6 +23,7 @@ model User {
   sessions      Session[]
   passwordResetToken   String?   @unique
   passwordResetExpires DateTime?
+  notes Note[]
 }
 
 model Account {
@@ -60,3 +61,15 @@ model VerificationToken {
 
 // Add this to the end of prisma/schema.prisma
 
+model Note {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  botId     String   // The ID of the bot from your bots.js file
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@unique([userId, botId]) // Ensures a user can only have one note per bot
+}
