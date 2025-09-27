@@ -923,6 +923,19 @@ body.dark-mode .category-tag {
 }
 
 /* --- UI ENHANCEMENT: Command Palette (cmdk) --- */
+
+/* NEW Animation for a smoother entrance from the top */
+@keyframes slideDownFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
 [cmdk-overlay] {
     position: fixed;
     inset: 0;
@@ -931,64 +944,148 @@ body.dark-mode .category-tag {
     -webkit-backdrop-filter: blur(8px);
     animation: fadeIn 0.2s ease;
 }
-[cmdk-dialog] {
-    transform: translate(-50%, -50%);
+
+/* UPDATED Rule for the dialog itself */
+
+/* --- UI ENHANCEMENT: Command Palette (cmdk) --- */
+
+/* NEW Animation for a smoother entrance from the top */
+@keyframes slideDownFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+[cmdk-overlay] {
     position: fixed;
-    top: 40%;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 0.2s ease;
+}
+
+/* UPDATED Rule for the dialog itself */
+/* --- UI ENHANCEMENT: Command Palette (cmdk) --- */
+
+/* Animation for a smooth entrance */
+@keyframes CommandBarEnter {
+  from { opacity: 0; transform: translate(-50%, -20px) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+/* The dark overlay behind the palette */
+[cmdk-overlay] {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 0.2s ease;
+}
+
+/* The main dialog container */
+[cmdk-dialog] {
+    position: fixed;
+    top: 15vh; 
     left: 50%;
+    transform: translate(-50%, 0);
     width: 100%;
     max-width: 640px;
-    background-color: var(--card-bg-dark);
+    background-color: var(--card-bg-dark); /* Using your theme colors */
     border: 1px solid var(--border-dark);
-    box-shadow: var(--shadow-dark);
+    box-shadow: 0 16px 70px rgba(0, 0, 0, 0.2);
     border-radius: var(--border-radius-lg);
     overflow: hidden;
-    animation: fadeIn 0.3s ease, slideUp 0.3s ease;
+    animation: CommandBarEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@keyframes slideUp {
-    from { transform: translate(-50%, -45%); }
-    to { transform: translate(-50%, -50%); }
-}
+
+/* The search input field */
 [cmdk-input] {
     font-family: var(--font-family);
     width: 100%;
-    font-size: 1.1rem;
-    padding: 20px;
+    font-size: 1rem;
+    padding: 20px 24px;
     border: none;
     border-bottom: 1px solid var(--border-dark);
     background-color: transparent;
     color: var(--text-primary-dark);
     outline: none;
 }
+[cmdk-input]::placeholder {
+    color: var(--text-secondary-dark);
+}
+
+/* The scrollable list container */
 [cmdk-list] {
-    height: min(300px, calc(var(--cmdk-list-height)));
+    height: min(330px, calc(var(--cmdk-list-height)));
     max-height: 400px;
     overflow: auto;
     overscroll-behavior: contain;
+    padding: 8px; /* Padding around the entire list */
 }
+
+/*
+ * THIS IS THE CRITICAL FIX: Styling the Group Headings
+ * This creates the visual separation between "NAVIGATION" and its items.
+ */
+[cmdk-group-heading] {
+    padding: 8px 16px;
+    font-size: 0.75rem; /* Smaller font size */
+    font-weight: 500;
+    color: var(--text-secondary-dark); /* Greyed out color */
+    text-transform: uppercase;
+    letter-spacing: 0.05em; /* Spaced out letters */
+}
+
+/* Styling for each individual item in the list */
 [cmdk-item] {
-    padding: 12px 20px;
+    padding: 10px 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--text-secondary-dark);
+    color: var(--text-primary-dark); /* Use the primary text color */
     font-weight: 500;
+    border-radius: var(--border-radius-sm); /* Slightly rounded corners */
+    transition: all 0.15s ease;
+    user-select: none; /* Prevent text selection when clicking */
 }
+
 [cmdk-item] svg {
     width: 18px;
     height: 18px;
+    color: var(--text-secondary-dark);
 }
+
+/*
+ * THIS IS THE SECOND FIX: Styling the Selected Item
+ * This matches the solid background highlight in your screenshot.
+ */
 [cmdk-item][aria-selected="true"] {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: var(--text-primary-dark);
+    background-color: var(--brand-color); /* Use your brand color for the highlight */
+    color: #fff; /* White text for better contrast */
 }
+[cmdk-item][aria-selected="true"] svg {
+    color: #fff;
+}
+
+/* A subtle hover effect for non-selected items */
+[cmdk-item]:hover:not([aria-selected="true"]) {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Styling for the "No results found" message */
 [cmdk-empty] {
     text-align: center;
     padding: 24px;
     color: var(--text-secondary-dark);
 }
-
 /* --- UI ENHANCEMENT: Featured Agent Section --- */
 .featured-agent-section {
     padding: 100px 0;
@@ -1764,4 +1861,64 @@ body.dark-mode .favorite-agent-workspace textarea {
 .workspace-actions .cta-button {
     padding: 10px 20px;
     font-size: 0.9rem;
+}
+
+
+/*
+================================================
+24. Agent Focus View
+================================================
+*/
+
+/* Make the whole card clickable */
+.chatbot-card {
+    cursor: pointer;
+}
+/* Stop propagation on the footer so buttons can be clicked inside the card */
+.chatbot-card .card-footer {
+    cursor: default;
+}
+
+.focus-view-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.focus-view-content {
+    width: 100%;
+    max-width: 600px; /* The expanded card size */
+    background-color: var(--card-bg-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-dark);
+}
+
+.focus-view-details {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-dark);
+}
+
+.focus-view-details h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+.focus-view-details ul {
+    padding-left: 20px;
+    margin: 0;
+    color: var(--text-secondary-dark);
+}
+.focus-view-details li {
+    margin-bottom: 8px;
 }

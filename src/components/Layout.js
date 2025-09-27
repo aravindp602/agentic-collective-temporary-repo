@@ -5,12 +5,12 @@ import Footer from './Footer';
 import CommandPalette from './CommandPalette';
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { useSession, signOut } from "next-auth/react";
 
-// --- NEW SPOTLIGHT COMPONENT ---
+// The Spotlight component creates the mouse-follow gradient effect
 function Spotlight() {
   useEffect(() => {
     const handler = (e) => {
-      // Use requestAnimationFrame for performance
       requestAnimationFrame(() => {
         document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
         document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
@@ -26,6 +26,7 @@ function Spotlight() {
 export default function Layout({ children }) {
   const [theme, setTheme] = useState('light-mode');
   const [isPaletteOpen, setPaletteOpen] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light-mode';
@@ -40,6 +41,10 @@ export default function Layout({ children }) {
     document.body.className = newTheme;
   };
 
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' });
+  };
+
   return (
     <>
       <Toaster 
@@ -52,9 +57,14 @@ export default function Layout({ children }) {
           },
         }}
       />
-      {/* --- ADD THE SPOTLIGHT HERE --- */}
       <Spotlight />
-      <CommandPalette open={isPaletteOpen} setOpen={setPaletteOpen} />
+      <CommandPalette 
+        open={isPaletteOpen} 
+        setOpen={setPaletteOpen}
+        toggleTheme={toggleTheme}
+        handleSignOut={handleSignOut}
+        isLoggedIn={!!session}
+      />
       <div className="background-grid"></div>
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
