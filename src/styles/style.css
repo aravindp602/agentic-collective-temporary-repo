@@ -2752,3 +2752,129 @@ body.dark-mode .form-field-animated label { color: var(--text-secondary-dark); }
     margin: 0;
     font-size: 1.5rem;
 }
+
+
+
+/*
+================================================
+... (All previous sections of your CSS file) ...
+================================================
+*/
+
+
+/*
+================================================
+(Your Responsive Section starts here)
+================================================
+*/
+
+/* --- WIDER TABLETS & SMALL LAPTOPS (~1200px) --- */
+@media (max-width: 1200px) {
+    .chatbot-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dashboard-main-column .chatbot-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- PORTRAIT TABLETS (~900px) --- */
+@media (max-width: 900px) {
+    .desktop-nav {
+        display: none;
+    }
+    .hamburger-btn {
+        display: block;
+    }
+    .header-actions {
+        border-left: none;
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .hero-layout {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+    .hero-showcase {
+        display: none;
+    }
+    .hero-content {
+        text-align: center;
+    }
+    .hero-title {
+        font-size: clamp(2.5rem, 10vw, 3.5rem);
+    }
+    .hero-subtitle {
+        margin: 0 auto 40px auto;
+    }
+
+    .featured-agent-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+    .featured-agent-icon-wrapper {
+        width: 60%;
+        padding-top: 60%;
+        margin: 0 auto;
+    }
+
+    .dashboard-grid-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .agent-page-body {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    .sidebar-card {
+        position: relative;
+        top: 0;
+    }
+}
+
+/* --- MOBILE PHONES (~768px and below) --- */
+@media (max-width: 768px) {
+    .chatbot-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-section-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .search-and-filters {
+        margin-bottom: 40px;
+    }
+    .category-filters-enhanced {
+        /* This makes the filter bar stack vertically on small screens */
+        flex-direction: column;
+        border-radius: var(--border-radius-lg);
+        padding: 16px;
+    }
+    
+    .auth-container {
+        padding: 20px;
+    }
+    .auth-box-content {
+        padding: 24px;
+    }
+
+    .agent-page-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .agent-header-content h1 {
+        font-size: 2.25rem;
+    }
+}
+
