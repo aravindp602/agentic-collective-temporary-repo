@@ -2757,14 +2757,7 @@ body.dark-mode .form-field-animated label { color: var(--text-secondary-dark); }
 
 /*
 ================================================
-... (All previous sections of your CSS file) ...
-================================================
-*/
-
-
-/*
-================================================
-(Your Responsive Section starts here)
+(Your Responsive Section starts here - REPLACE this whole block)
 ================================================
 */
 
@@ -2855,11 +2848,24 @@ body.dark-mode .form-field-animated label { color: var(--text-secondary-dark); }
     .search-and-filters {
         margin-bottom: 40px;
     }
+    
+    /* --- THIS IS THE CRITICAL FIX FOR THE FILTER BAR --- */
     .category-filters-enhanced {
-        /* This makes the filter bar stack vertically on small screens */
-        flex-direction: column;
-        border-radius: var(--border-radius-lg);
-        padding: 16px;
+        justify-content: flex-start; /* Align items to the start */
+        flex-wrap: nowrap; /* Prevent buttons from wrapping to the next line */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        scrollbar-width: none; /* Hide scrollbar for Firefox */
+        border: none; /* Remove border on mobile for a cleaner look */
+        border-radius: 0;
+        padding: 8px 0;
+        margin: 0 -24px; /* Extend to the edges of the container's padding */
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+    /* Hide scrollbar for Chrome, Safari, and Opera */
+    .category-filters-enhanced::-webkit-scrollbar {
+        display: none;
     }
     
     .auth-container {
@@ -2877,4 +2883,3 @@ body.dark-mode .form-field-animated label { color: var(--text-secondary-dark); }
         font-size: 2.25rem;
     }
 }
-
