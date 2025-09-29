@@ -2227,3 +2227,81 @@ body.dark-mode .related-agent {
 }
 
 
+/* --- 6. Search, Filters & Cards (UPDATED SECTION) --- */
+/* ... (search-bar-wrapper and search-input styles remain the same) ... */
+
+/* --- NEW: Enhanced Category Filters --- */
+.category-filters-enhanced {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 99px;
+    padding: 8px;
+    background-color: var(--card-bg-light);
+    max-width: fit-content;
+    margin: 0 auto;
+}
+body.dark-mode .category-filters-enhanced {
+    border-color: var(--border-dark);
+    background-color: var(--card-bg-dark);
+}
+
+.filter-btn-enhanced {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease-in-out;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secondary-light);
+}
+body.dark-mode .filter-btn-enhanced {
+    color: var(--text-secondary-dark);
+}
+
+.filter-btn-enhanced:hover {
+    color: var(--text-primary-light);
+}
+body.dark-mode .filter-btn-enhanced:hover {
+    color: var(--text-primary-dark);
+}
+
+.filter-btn-enhanced.active {
+    background-color: var(--brand-color);
+    color: white;
+    box-shadow: 0 4px 15px var(--brand-glow);
+}
+
+.filter-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+.filter-btn-enhanced.active .filter-icon {
+    stroke: white;
+}
+
+.agent-count {
+    font-size: 0.8rem;
+    font-weight: 400;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background-color: var(--border-light);
+    color: var(--text-secondary-light);
+}
+body.dark-mode .agent-count {
+    background-color: var(--border-dark);
+    color: var(--text-secondary-dark);
+}
+.filter-btn-enhanced.active .agent-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
