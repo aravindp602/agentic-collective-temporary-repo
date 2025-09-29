@@ -24,6 +24,7 @@ model User {
   passwordResetToken   String?   @unique
   passwordResetExpires DateTime?
   notes Note[]
+  
 }
 
 model Account {
