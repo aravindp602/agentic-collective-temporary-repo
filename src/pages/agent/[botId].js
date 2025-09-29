@@ -40,7 +40,6 @@ export default function AgentPage({ bot }) {
                 transition={{ duration: 0.4 }}
             >
                 <div className="agent-page-container container">
-                    {/* --- HEADER SECTION --- */}
                     <header className="agent-page-header">
                         <div className="card-icon-wrapper large-icon">
                             <img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" />
@@ -51,7 +50,6 @@ export default function AgentPage({ bot }) {
                         </div>
                     </header>
 
-                    {/* --- MAIN CONTENT GRID --- */}
                     <div className="agent-page-body">
                         <div className="agent-main-content">
                             <div className="content-section">
@@ -68,9 +66,15 @@ export default function AgentPage({ bot }) {
 
                         <aside className="agent-sidebar">
                             <div className="sidebar-card">
-                                <Link href={launchUrl} className="cta-button launch-agent-button" target="_blank">
-                                    Launch Agent
+                                {/* --- THE NEW AGENT LAB BUTTON --- */}
+                                <Link href={`/lab/${bot.id}`} className="cta-button lab-button">
+                                    Open in Agent Lab
                                 </Link>
+                                
+                                <Link href={launchUrl} className="cta-button launch-agent-button" target="_blank">
+                                    Launch Fullscreen
+                                </Link>
+                                
                                 <div className="detail-item">
                                     <h4>Complexity</h4>
                                     <div className="complexity-meter">
@@ -79,6 +83,7 @@ export default function AgentPage({ bot }) {
                                         ))}
                                     </div>
                                 </div>
+                                
                                 {bot.relatedAgents && bot.relatedAgents.length > 0 && (
                                     <div className="detail-item">
                                         <h4>Related Agents</h4>
@@ -100,7 +105,7 @@ export default function AgentPage({ bot }) {
     );
 }
 
-// --- SERVER-SIDE DATA FETCHING (No changes needed here) ---
+// Fetches the data for a specific agent on the server before rendering the page
 export async function getServerSideProps(context) {
     const { botId } = context.params;
     const bot = chatbotData.find(b => b.id === botId) || null;
