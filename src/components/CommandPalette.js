@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { chatbotData } from '../data/bots';
 import { useEffect } from 'react';
 
-export default function CommandPalette({ open, setOpen, toggleTheme, handleSignOut, isLoggedIn }) {
+export default function CommandPalette({ open, setOpen, toggleTheme, handleSignOut, isLoggedIn, openContact }) {
   const router = useRouter();
 
   useEffect(() => {
@@ -26,29 +26,26 @@ export default function CommandPalette({ open, setOpen, toggleTheme, handleSignO
 
   return (
     <Command.Dialog open={open} onOpenChange={setOpen} label="Global Command Menu">
-      <Command.Input placeholder="Type a command or search for an agent..." />
-      <Command.List>
-        <Command.Empty>No results found.</Command.Empty>
-        
-        <Command.Group heading="Navigation">
-          <Command.Item onSelect={() => runCommand(() => router.push('/'))}>Home / Explore</Command.Item>
-          {isLoggedIn && <Command.Item onSelect={() => runCommand(() => router.push('/dashboard'))}>Dashboard</Command.Item>}
-        </Command.Group>
-
-        {/* --- NEW ACTIONS GROUP --- */}
-        <Command.Group heading="Actions">
-            <Command.Item onSelect={() => runCommand(toggleTheme)}>Toggle Theme</Command.Item>
-            {isLoggedIn && <Command.Item onSelect={() => runCommand(handleSignOut)}>Sign Out</Command.Item>}
-        </Command.Group>
-        
-        <Command.Group heading="Agents">
-          {chatbotData.map((bot) => (
-            <Command.Item key={bot.id} onSelect={() => runCommand(() => router.push(`/embed/${bot.id}`))}>
-              {bot.name}
-            </Command.Item>
-          ))}
-        </Command.Group>
-      </Command.List>
+        <Command.Input placeholder="Type a command or search for an agent..." />
+        <Command.List>
+            <Command.Empty>No results found.</Command.Empty>
+            <Command.Group heading="Navigation">
+                <Command.Item onSelect={() => runCommand(() => router.push('/'))}>Home / Explore</Command.Item>
+                {isLoggedIn && <Command.Item onSelect={() => runCommand(() => router.push('/dashboard'))}>Dashboard</Command.Item>}
+            </Command.Group>
+            <Command.Group heading="Actions">
+                <Command.Item onSelect={() => runCommand(toggleTheme)}>Toggle Theme</Command.Item>
+                {isLoggedIn && <Command.Item onSelect={() => runCommand(handleSignOut)}>Sign Out</Command.Item>}
+                <Command.Item onSelect={() => runCommand(openContact)}>✉️ Contact Us</Command.Item>
+            </Command.Group>
+            <Command.Group heading="Agents">
+                {chatbotData.map((bot) => (
+                    <Command.Item key={bot.id} onSelect={() => runCommand(() => router.push(`/agent/${bot.id}`))}>
+                        {bot.name}
+                    </Command.Item>
+                ))}
+            </Command.Group>
+        </Command.List>
     </Command.Dialog>
   );
 }

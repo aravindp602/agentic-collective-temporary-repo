@@ -3,7 +3,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
-import { chatbotData, categoriesWithIcons } from '../data/bots'; // Using new data structure
+import { chatbotData, categoriesWithIcons } from '../data/bots';
 import Layout from '../components/Layout';
 import FeaturedAgent from '../components/FeaturedAgent';
 import toast from 'react-hot-toast';
@@ -46,7 +46,7 @@ export default function HomePage() {
     const gridRef = useRef(null);
 
     useEffect(() => {
-        setFilteredBots(chatbotData); // Show all bots initially
+        setFilteredBots(chatbotData);
         setTimeout(() => {
             const savedFavorites = JSON.parse(localStorage.getItem('favoriteBots')) || [];
             setFavorites(savedFavorites);
@@ -56,22 +56,16 @@ export default function HomePage() {
 
     useEffect(() => {
         if (isLoading) return;
-
         let newFilteredBots = chatbotData;
-
-        // Apply category filter first
         if (filterKey !== '*') {
             newFilteredBots = newFilteredBots.filter(bot => bot.category === filterKey);
         }
-
-        // Then apply search term filter to the result
         if (searchTerm) {
             const lowerSearchTerm = searchTerm.toLowerCase();
             newFilteredBots = newFilteredBots.filter(bot =>
                 bot.name.toLowerCase().includes(lowerSearchTerm) || bot.description.toLowerCase().includes(lowerSearchTerm)
             );
         }
-        
         setFilteredBots(newFilteredBots);
     }, [filterKey, searchTerm, isLoading]);
 
@@ -225,9 +219,19 @@ export default function HomePage() {
                 </motion.div>
                 
                 <div className="section-flare"></div>
+                
                 <motion.div {...sectionAnimation}>
-                    <section className="final-cta-section"><div className="container"><h2>Ready to Start?</h2><p>Dive in and explore the future of AI-powered assistance. Your personal dashboard is just one click away.</p><Link href="/dashboard" className="cta-button">Go to Your Dashboard</Link></div></section>
+                    <section className="final-cta-section">
+                        <div className="container">
+                            <h2>Ready to Start?</h2>
+                            <p>Dive in and explore the future of AI-powered assistance. Your personal dashboard is just one click away.</p>
+                            <Link href="/dashboard" className="cta-button">Go to Your Dashboard</Link>
+                        </div>
+                    </section>
                 </motion.div>
+
+                {/* The Contact Section has been removed from this page and is now globally managed by Layout.js */}
+
             </motion.div>
         </Layout>
     );
