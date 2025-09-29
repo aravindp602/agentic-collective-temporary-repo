@@ -2052,7 +2052,7 @@ body.dark-mode .favorite-agent-workspace textarea {
 
 /*
 ================================================
-26. Dedicated Agent Page
+26. Dedicated Agent Page (FINAL - CORRECTED)
 ================================================
 */
 
@@ -2060,51 +2060,34 @@ body.dark-mode .favorite-agent-workspace textarea {
 .agent-card-link {
     text-decoration: none;
     color: inherit;
-    display: block; /* Important for layout */
+    display: block;
 }
 
 .agent-page-container {
-    padding-top: 80px;
-    padding-bottom: 100px;
-    max-width: 1024px; /* A more constrained, focused width */
+    padding-top: 60px;
+    padding-bottom: 80px;
 }
 
-/* --- HEADER --- */
 .agent-page-header {
     display: flex;
     align-items: center;
     gap: 24px;
-    margin-bottom: 60px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 40px;
 }
-body.dark-mode .agent-page-header {
-    border-bottom-color: var(--border-dark);
-}
-
 .card-icon-wrapper.large-icon {
-    width: 64px; /* Slightly smaller for refinement */
-    height: 64px;
-    border-radius: var(--border-radius-md);
-    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
 }
 .card-icon-wrapper.large-icon .card-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
 }
-
 .agent-header-content h1 {
-    font-size: 2.5rem; /* Adjusted for balance */
-    font-weight: 800;
-    margin: 0 0 8px 0;
-    color: var(--text-primary-light);
+    font-size: 3rem;
+    margin: 0 0 4px 0;
 }
-body.dark-mode .agent-header-content h1 {
-    color: var(--text-primary-dark);
-}
-
 .agent-category-tag {
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-secondary-light);
     background-color: var(--bg-color-light);
@@ -2119,63 +2102,20 @@ body.dark-mode .agent-category-tag {
     border-color: var(--border-dark);
 }
 
-/* --- BODY LAYOUT --- */
 .agent-page-body {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 80px; /* Increased gap for more space */
+    gap: 60px;
 }
 
 .agent-main-content h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: var(--text-primary-light);
+    font-size: 1.75rem;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
 }
 body.dark-mode .agent-main-content h2 {
-    color: var(--text-primary-dark);
-}
-
-.agent-main-content p {
-    color: var(--text-secondary-light);
-    font-size: 1rem;
-    line-height: 1.7;
-}
-body.dark-mode .agent-main-content p {
-    color: var(--text-secondary-dark);
-}
-
-.content-section {
-    margin-bottom: 40px;
-}
-
-.content-section h3 {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--text-secondary-light);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 12px;
-}
-body.dark-mode .content-section h3 {
-    color: var(--text-secondary-dark);
-}
-
-.use-case-tags .tag {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary-light);
-    padding: 0;
-    background: none;
-    margin-right: 16px;
-}
-body.dark-mode .use-case-tags .tag {
-    color: var(--text-secondary-dark);
-}
-
-/* --- SIDEBAR --- */
-.agent-sidebar {
-    position: relative;
+    border-bottom-color: var(--border-dark);
 }
 
 .sidebar-card {
@@ -2184,30 +2124,52 @@ body.dark-mode .use-case-tags .tag {
     border-radius: var(--border-radius-lg);
     padding: 24px;
     position: sticky;
-    top: 120px; /* Sticky below the header */
-    box-shadow: var(--shadow-light);
+    top: 100px;
 }
 body.dark-mode .sidebar-card {
     background-color: var(--card-bg-dark);
     border-color: var(--border-dark);
-    box-shadow: none;
 }
 
-.launch-agent-button {
-    width: 80%;
+/* 
+ * --- THIS IS THE CRITICAL FIX --- 
+ */
+.sidebar-card .cta-button {
+    width: 85%;
     text-align: center;
+    display: block; /* Ensure links take full width */
+    margin-bottom: 12px; /* Add space between buttons */
+}
+/* Remove margin from the last button in the group */
+.sidebar-card .cta-button:last-of-type {
     margin-bottom: 24px;
-    display: block;
-    background-color: var(--brand-color); /* Match screenshot color */
 }
 
-.sidebar-card .detail-item {
+/* New class for the secondary fullscreen button */
+.fullscreen-button {
+    background-color: var(--border-light);
+    color: var(--text-primary-light);
+}
+.fullscreen-button:hover {
+    background-color: #ddd; /* A slightly darker hover for the light button */
+}
+body.dark-mode .fullscreen-button {
+    background-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+body.dark-mode .fullscreen-button:hover {
+    background-color: #3a4049;
+}
+/*
+ * --- END OF FIX ---
+ */
+.detail-item {
     margin-bottom: 20px;
 }
-.sidebar-card .detail-item:last-child {
+.detail-item:last-child {
     margin-bottom: 0;
 }
-.sidebar-card h4 {
+.detail-item h4 {
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--text-secondary-light);
@@ -2216,14 +2178,22 @@ body.dark-mode .sidebar-card {
     margin-top: 0;
     margin-bottom: 10px;
 }
-body.dark-mode .sidebar-card h4 {
+body.dark-mode .detail-item h4 {
     color: var(--text-secondary-dark);
 }
-
-.complexity-meter .bar.filled {
-    background-color: var(--brand-color); /* Match screenshot color */
+.complexity-meter {
+    display: flex;
+    gap: 4px;
+    height: 8px;
 }
-
+.complexity-meter .bar {
+    width: 100%;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 99px;
+}
+.complexity-meter .bar.filled {
+    background-color: var(--brand-color);
+}
 .related-agents-list {
     display: flex;
     flex-direction: column;
@@ -2232,26 +2202,20 @@ body.dark-mode .sidebar-card h4 {
 .related-agent {
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.9rem;
-    color: var(--text-primary-light);
+    color: var(--text-secondary-light);
     transition: color var(--transition-speed);
 }
 .related-agent:hover {
     color: var(--brand-color);
 }
 body.dark-mode .related-agent {
-    color: var(--text-primary-dark);
+    color: var(--text-secondary-dark);
 }
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
+/* Responsive adjustments */
 @media (max-width: 900px) {
     .agent-page-body {
         grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    .sidebar-card {
-        position: relative;
-        top: 0;
     }
 }
 @media (max-width: 768px) {
@@ -2260,91 +2224,9 @@ body.dark-mode .related-agent {
         text-align: center;
     }
     .agent-header-content h1 {
-        font-size: 2.25rem;
+        font-size: 2.5rem;
     }
 }
-
-
-/* --- 6. Search, Filters & Cards (UPDATED SECTION) --- */
-/* ... (search-bar-wrapper and search-input styles remain the same) ... */
-
-/* --- NEW: Enhanced Category Filters --- */
-.category-filters-enhanced {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    border: 1px solid var(--border-light);
-    border-radius: 99px;
-    padding: 8px;
-    background-color: var(--card-bg-light);
-    max-width: fit-content;
-    margin: 0 auto;
-}
-body.dark-mode .category-filters-enhanced {
-    border-color: var(--border-dark);
-    background-color: var(--card-bg-dark);
-}
-
-.filter-btn-enhanced {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-family);
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 99px;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease-in-out;
-    border: none;
-    background-color: transparent;
-    color: var(--text-secondary-light);
-}
-body.dark-mode .filter-btn-enhanced {
-    color: var(--text-secondary-dark);
-}
-
-.filter-btn-enhanced:hover {
-    color: var(--text-primary-light);
-}
-body.dark-mode .filter-btn-enhanced:hover {
-    color: var(--text-primary-dark);
-}
-
-.filter-btn-enhanced.active {
-    background-color: var(--brand-color);
-    color: white;
-    box-shadow: 0 4px 15px var(--brand-glow);
-}
-
-.filter-icon {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-}
-.filter-btn-enhanced.active .filter-icon {
-    stroke: white;
-}
-
-.agent-count {
-    font-size: 0.8rem;
-    font-weight: 400;
-    padding: 2px 6px;
-    border-radius: 6px;
-    background-color: var(--border-light);
-    color: var(--text-secondary-light);
-}
-body.dark-mode .agent-count {
-    background-color: var(--border-dark);
-    color: var(--text-secondary-dark);
-}
-.filter-btn-enhanced.active .agent-count {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
-
 /*
 ================================================
 27. Contact Section
@@ -2884,28 +2766,84 @@ body.dark-mode .mobile-nav nav a { color: var(--text-primary-dark); }
 .mobile-nav-footer .cta-button { padding: 12px 48px; }
 
 
-
 /*
 ================================================
-29. Agent Lab Workspace
+29. Agent Lab Workspace (FINAL - CORRECTED)
 ================================================
 */
+
+/* --- Top Bar --- */
+.lab-top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px 40px;
+    background-color: var(--card-bg-light);
+    border-bottom: 1px solid var(--border-light);
+    z-index: 10;
+}
+body.dark-mode .lab-top-bar {
+    background-color: var(--card-bg-dark);
+    border-bottom-color: var(--border-dark);
+}
+.back-to-dashboard {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+.back-to-dashboard:hover {
+    color: var(--brand-color);
+}
+body.dark-mode .back-to-dashboard {
+    color: var(--text-secondary-dark);
+}
+
+/* --- MAIN LAYOUT --- */
 .agent-lab-layout {
     display: grid;
-    grid-template-columns: 1fr 400px; /* Main content and a fixed-width sidebar */
-    height: 100vh;
+    grid-template-columns: 1fr 400px; /* Chatbot (main) | Scratchpad (sidebar) */
+    height: calc(100vh - 57px); 
+    margin-top: 57px;
+    transition: grid-template-columns 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+body.dark-mode .agent-lab-layout {
+    background-color: var(--bg-color-dark);
+}
+
+/* Zen Mode: Scratchpad takes the full screen */
+.agent-lab-layout.zen-mode {
+    grid-template-columns: 0px 1fr;
+}
+.agent-lab-layout.zen-mode .lab-iframe-panel {
+    opacity: 0;
+    padding: 0;
     overflow: hidden;
 }
 
 .lab-iframe-panel {
+    position: relative;
     height: 100%;
+    padding: 24px;
+    transition: all 0.5s ease;
+    background-color: var(--bg-color-light);
+}
+body.dark-mode .lab-iframe-panel {
+    background-color: var(--bg-color-dark);
 }
 .lab-iframe {
     width: 100%;
     height: 100%;
-    border: none;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+}
+body.dark-mode .lab-iframe {
+    border-color: var(--border-dark);
 }
 
+/* --- SCRATCHPAD PANEL --- */
 .lab-scratchpad-panel {
     height: 100%;
     display: flex;
@@ -2919,80 +2857,74 @@ body.dark-mode .lab-scratchpad-panel {
 }
 
 .scratchpad-header {
-    padding: 20px;
+    padding: 24px;
     border-bottom: 1px solid var(--border-light);
     flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 body.dark-mode .scratchpad-header {
     border-bottom-color: var(--border-dark);
 }
-.scratchpad-header h3 {
-    margin: 0 0 4px 0;
-}
-.scratchpad-header p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary-light);
-}
-body.dark-mode .scratchpad-header p {
-    color: var(--text-secondary-dark);
-}
+.scratchpad-header .header-text h3 { margin: 0 0 4px 0; font-size: 1.25rem; }
+.scratchpad-header .header-text p { margin: 0; font-size: 0.9rem; color: var(--text-secondary-light); }
+body.dark-mode .scratchpad-header .header-text p { color: var(--text-secondary-dark); }
+.zen-mode-toggle { font-size: 0.8rem; font-weight: 500; padding: 6px 12px; border-radius: var(--border-radius-sm); background-color: var(--card-bg-light); border: 1px solid var(--border-light); color: var(--text-secondary-light); cursor: pointer; }
+body.dark-mode .zen-mode-toggle { background-color: var(--card-bg-dark); border-color: var(--border-dark); color: var(--text-secondary-dark); }
 
+/* 
+ * --- AUTO-GROWING EDITOR & TEXT COLOR FIX --- 
+ */
 .scratchpad-editor {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
+    flex-grow: 1; /* Allows the container to fill space */
+    position: relative;
+    overflow-y: auto; /* The CONTAINER will scroll if max-height is reached */
 }
-.scratchpad-editor textarea {
-    width: 100%;
-    height: 100%;
-    border: none;
+
+/* The editor itself is not scrollable */
+.scratchpad-editor .EasyMDEContainer, 
+.scratchpad-editor .CodeMirror {
+    height: auto !important; /* Allow height to be determined by content */
+    min-height: 200px; /* Start with a minimum height */
+    max-height: calc(100vh - 250px); /* Set a max height before scrolling */
+    border: none !important;
     background: transparent;
-    resize: none;
-    font-family: var(--font-family);
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--text-primary-light);
 }
-body.dark-mode .scratchpad-editor textarea {
-    color: var(--text-primary-dark);
-}
-.scratchpad-editor textarea:focus {
-    outline: none;
+.scratchpad-editor .CodeMirror-scroll {
+    padding: 24px;
+    min-height: 200px; /* Match the container's min-height */
 }
 
-.scratchpad-footer {
-    padding: 20px;
-    border-top: 1px solid var(--border-light);
-    display: flex;
-    gap: 12px;
-    flex-shrink: 0;
+/* This is the most specific selector to GUARANTEE text visibility */
+.cm-s-easymde .CodeMirror-line pre > span {
+    color: var(--text-primary-light) !important;
 }
-body.dark-mode .scratchpad-footer {
-    border-top-color: var(--border-dark);
+body.dark-mode .cm-s-easymde .CodeMirror-line pre > span {
+    color: var(--text-primary-dark) !important;
 }
+/* END OF FIX */
 
-/* New button style on agent page */
-.lab-button {
-    width: 80%;
-    text-align: center;
-    margin-bottom: 12px;
-    display: block;
-    background-color: #333; /* A different color */
-}
-body.dark-mode .lab-button {
-    background-color: var(--border-light);
-    color: var(--text-primary-dark);
-}
 
-/* Responsive */
+/* --- FOOTER & SAVE STATE (No changes from previous version) --- */
+.scratchpad-footer { padding: 16px 24px; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+body.dark-mode .scratchpad-footer { border-top-color: var(--border-dark); }
+.save-status { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary-light); transition: color 0.3s ease; display: flex; align-items: center; gap: 6px; }
+body.dark-mode .save-status { color: var(--text-secondary-dark); }
+.save-status.saved { color: #2e7d32; }
+body.dark-mode .save-status.saved { color: #66bb6a; }
+.save-spinner { width: 14px; height: 14px; border: 2px solid var(--border-light); border-top-color: var(--brand-color); border-radius: 50%; animation: spin 1s linear infinite; }
+.saved-checkmark { color: inherit; }
+.footer-actions { display: flex; gap: 12px; }
+.footer-actions .cta-button, .footer-actions .details-link { padding: 8px 16px; font-size: 0.9rem; border-radius: var(--border-radius-sm); }
+.footer-actions .details-link { background-color: var(--border-light); }
+body.dark-mode .footer-actions .details-link { background-color: var(--border-dark); }
+.footer-actions .cta-button:disabled { background-color: var(--border-light); cursor: not-allowed; color: var(--text-secondary-light); }
+body.dark-mode .footer-actions .cta-button:disabled { background-color: var(--border-dark); color: var(--text-secondary-dark); }
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
 @media (max-width: 900px) {
-    .agent-lab-layout {
-        grid-template-columns: 1fr;
-        grid-template-rows: 60vh 40vh; /* Agent on top, scratchpad on bottom */
-    }
-    .lab-scratchpad-panel {
-        border-left: none;
-        border-top: 1px solid var(--border-dark);
-    }
+    .agent-lab-layout { grid-template-columns: 1fr; grid-template-rows: 60vh 1fr; height: auto; margin-top: 57px; }
+    .lab-iframe-panel { border-right: none; }
+    .lab-scratchpad-panel { display: flex; border-left: none; border-top: 1px solid var(--border-dark); }
 }

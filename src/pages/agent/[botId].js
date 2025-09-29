@@ -8,14 +8,13 @@ import Link from 'next/link';
 
 // This is the main component for the agent page
 export default function AgentPage({ bot }) {
-    // A fallback for safety, though Next.js should handle this with notFound: true
     if (!bot) {
+        // Fallback for safety, though getServerSideProps should handle this
         return (
             <Layout>
-                <div className="container agent-page-container">
+                <div className="agent-page-container container">
                     <h1>Agent Not Found</h1>
-                    <p>The agent you are looking for does not exist.</p>
-                    <Link href="/">← Back to Explore</Link>
+                    <p>The agent you are looking for does not exist or may have been moved.</p>
                 </div>
             </Layout>
         );
@@ -26,8 +25,10 @@ export default function AgentPage({ bot }) {
     return (
         <Layout>
             <Head>
+                {/* --- SEO META TAGS --- */}
                 <title>{bot.name} | Agentic Collective</title>
                 <meta name="description" content={bot.description} />
+                {/* Open Graph tags for social sharing */}
                 <meta property="og:title" content={`${bot.name} | Agentic Collective`} />
                 <meta property="og:description" content={bot.description} />
                 <meta property="og:type" content="website" />
@@ -66,12 +67,11 @@ export default function AgentPage({ bot }) {
 
                         <aside className="agent-sidebar">
                             <div className="sidebar-card">
-                                {/* --- THE NEW AGENT LAB BUTTON --- */}
-                                <Link href={`/lab/${bot.id}`} className="cta-button lab-button">
+                                <Link href={`/lab/${bot.id}`} className="cta-button">
                                     Open in Agent Lab
                                 </Link>
                                 
-                                <Link href={launchUrl} className="cta-button launch-agent-button" target="_blank">
+                                <Link href={launchUrl} className="cta-button fullscreen-button" target="_blank">
                                     Launch Fullscreen
                                 </Link>
                                 
@@ -105,14 +105,24 @@ export default function AgentPage({ bot }) {
     );
 }
 
-// Fetches the data for a specific agent on the server before rendering the page
+// --- SERVER-SIDE DATA FETCHING ---
 export async function getServerSideProps(context) {
     const { botId } = context.params;
+
+    // Find the bot data from your local file
     const bot = chatbotData.find(b => b.id === botId) || null;
 
+    // If no bot is found, return a 404 page
     if (!bot) {
-        return { notFound: true };
+        return {
+            notFound: true,
+        };
     }
 
-    return { props: { bot } };
+    // Pass the bot data as props to the page component
+    return {
+        props: {
+            bot,
+        },
+    };
 }

@@ -16,34 +16,21 @@ export default async function handler(req, res) {
   const userId = token.id;
 
   if (req.method === 'GET') {
-    // --- FETCH A NOTE ---
     try {
       const note = await prisma.note.findUnique({
-        where: {
-          userId_botId: { userId, botId },
-        },
+        where: { userId_botId: { userId, botId } },
       });
-      // Return the note or null if it doesn't exist
-      res.status(200).json(note);
+      res.status(200).json(note); // Will be null if not found
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch note.' });
     }
   } else if (req.method === 'POST') {
-    // --- CREATE OR UPDATE A NOTE ---
     const { content } = req.body;
     try {
       const note = await prisma.note.upsert({
-        where: {
-          userId_botId: { userId, botId },
-        },
-        update: {
-          content,
-        },
-        create: {
-          content,
-          botId,
-          userId,
-        },
+        where: { userId_botId: { userId, botId } },
+        update: { content },
+        create: { content, botId, userId },
       });
       res.status(200).json({ message: 'Note saved!', note });
     } catch (error) {
