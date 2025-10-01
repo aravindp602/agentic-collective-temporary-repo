@@ -2977,3 +2977,106 @@ body.dark-mode .empty-favorites-container p {
     padding: 0;
     background: transparent;
 }
+
+
+
+/*
+================================================
+FINAL UI/UX POLISH
+================================================
+*/
+
+/* --- 1. Onboarding & Hints --- */
+.search-bar-wrapper {
+    position: relative; /* For positioning the hint */
+}
+.kbd-hint {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 4px;
+    pointer-events: none;
+    opacity: 0.5;
+}
+.kbd-hint kbd {
+    font-family: var(--font-family);
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: var(--border-light);
+    border: 1px solid #ccc;
+}
+body.dark-mode .kbd-hint kbd {
+    background: var(--border-dark);
+    border-color: #444;
+}
+
+.zen-mode-wrapper {
+    position: relative;
+}
+.onboarding-tooltip {
+    position: absolute;
+    bottom: 120%;
+    right: 0;
+    width: 200px;
+    background: var(--card-bg-dark);
+    color: var(--text-primary-dark);
+    padding: 12px;
+    border-radius: var(--border-radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-dark);
+    border: 1px solid var(--border-dark);
+}
+.onboarding-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 20px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--card-bg-dark) transparent transparent transparent;
+}
+.tooltip-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    color: var(--text-secondary-dark);
+    cursor: pointer;
+}
+
+/* --- 2. Ambient Save Indicators --- */
+.save-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary-light);
+    transition: color 0.3s ease;
+}
+body.dark-mode .save-status {
+    color: var(--text-secondary-dark);
+}
+.save-status.saved {
+    color: #2e7d32;
+}
+body.dark-mode .save-status.saved {
+    color: #66bb6a;
+}
+.save-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border-light);
+    border-top-color: var(--brand-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+.saved-checkmark {
+    color: inherit;
+    font-weight: 700;
+}

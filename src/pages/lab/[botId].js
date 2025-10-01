@@ -11,11 +11,7 @@ import useDebounce from '../../hooks/useDebounce';
 import dynamic from 'next/dynamic';
 import LabLayout from '../../components/LabLayout';
 
-// Dynamically import the editor and disable Server-Side Rendering (SSR)
-const SimpleMdeEditor = dynamic(
-    () => import("react-simplemde-editor"),
-    { ssr: false }
-);
+const SimpleMdeEditor = dynamic(() => import("react-simplemde-editor"), { ssr: false });
 import "easymde/dist/easymde.min.css";
 
 export default function AgentLabPage() {
@@ -27,23 +23,22 @@ export default function AgentLabPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
     const [isZenMode, setIsZenMode] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(false);
     const { data: session, status } = useSession();
     
     const debouncedNoteContent = useDebounce(noteContent, 2000);
     const isInitialMount = useRef(true);
 
     useEffect(() => {
-        if (botId) {
-            const foundBot = chatbotData.find(b => b.id === botId);
-            setBot(foundBot);
+        if (!localStorage.getItem('hasSeenLabTooltip')) {
+            setShowTooltip(true);
         }
+        if (botId) setBot(chatbotData.find(b => b.id === botId));
     }, [botId]);
 
     useEffect(() => {
         if (status === "loading") return;
-        if (!session) {
-            signIn(undefined, { callbackUrl: router.asPath });
-        }
+        if (!session) signIn(undefined, { callbackUrl: router.asPath });
     }, [session, status, router]);
 
     useEffect(() => {
@@ -51,10 +46,8 @@ export default function AgentLabPage() {
             fetch(`/api/notes/${bot.id}`)
                 .then(res => res.json())
                 .then(note => {
-                    if (note) {
-                        setNoteContent(note.content);
-                    }
-                    isInitialMount.current = true; // Set true after loading to prevent initial save
+                    if (note) setNoteContent(note.content);
+                    isInitialMount.current = true;
                 })
                 .catch(err => toast.error("Could not load your notes."))
                 .finally(() => setIsLoading(false));
@@ -70,20 +63,14 @@ export default function AgentLabPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: contentToSave }),
             });
-            if (!response.ok) throw new Error('Failed to save note.');
+            if (!response.ok) throw new Error('Failed to save.');
             setIsDirty(false);
-        } catch (error) {
-            toast.error(error.message);
-        } finally {
-            setIsSaving(false);
-        }
+        } catch (error) { toast.error(error.message);
+        } finally { setIsSaving(false); }
     }, [bot, isDirty]);
 
     useEffect(() => {
-        if (isInitialMount.current) {
-            isInitialMount.current = false;
-            return;
-        }
+        if (isInitialMount.current) { isInitialMount.current = false; return; }
         handleSaveNote(debouncedNoteContent);
     }, [debouncedNoteContent, handleSaveNote]);
 
@@ -92,22 +79,23 @@ export default function AgentLabPage() {
         setIsDirty(true);
     }, []);
     
-    const getSaveStatus = () => {
-        if (isSaving) return <><span className="save-spinner"></span>Saving...</>;
-        if (!isDirty) return <span className="saved-checkmark">✓ All changes saved</span>;
-        return 'Unsaved changes';
+    const dismissTooltip = () => {
+        setShowTooltip(false);
+        localStorage.setItem('hasSeenLabTooltip', 'true');
     };
 
-    // Memoize the editor options to prevent re-renders
-    const editorOptions = useMemo(() => {
-        return {
-            autofocus: true,
-            spellChecker: false,
-            toolbar: ["bold", "italic", "strikethrough", "|", "code", "quote", "unordered-list", "ordered-list", "|", "preview"],
-            status: false,
-            // The height is now controlled purely by CSS for the auto-growing effect
-        };
-    }, []);
+    const getSaveStatus = () => {
+        if (isSaving) return <><span className="save-spinner"></span>Saving...</>;
+        if (isDirty) return 'Unsaved changes';
+        return <span className="saved-checkmark">✓ All changes saved</span>;
+    };
+
+    const editorOptions = useMemo(() => ({
+        autofocus: true,
+        spellChecker: false,
+        toolbar: ["bold", "italic", "strikethrough", "|", "code", "quote", "unordered-list", "ordered-list", "|", "preview"],
+        status: false,
+    }), []);
 
     if (status === "loading" || !bot) {
         return <div className="full-page-message-wrapper">Loading Lab...</div>;
@@ -134,9 +122,17 @@ export default function AgentLabPage() {
                             <h3>Scratchpad</h3>
                             <p>Your personal notes for <strong>{bot.name}</strong></p>
                         </div>
-                        <button className="zen-mode-toggle" onClick={() => setIsZenMode(!isZenMode)} title="Toggle Focus Mode">
-                            {isZenMode ? 'Exit Focus' : 'Focus Mode'}
-                        </button>
+                        <div className="zen-mode-wrapper">
+                            <button className="zen-mode-toggle" onClick={() => setIsZenMode(!isZenMode)} title="Toggle Focus Mode">
+                                {isZenMode ? 'Exit Focus' : 'Focus Mode'}
+                            </button>
+                            {showTooltip && (
+                                <div className="onboarding-tooltip">
+                                    <button onClick={dismissTooltip} className="tooltip-close">×</button>
+                                    Click here for a distraction-free writing experience!
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className="scratchpad-editor">
                         <SimpleMdeEditor
@@ -150,9 +146,6 @@ export default function AgentLabPage() {
                             {getSaveStatus()}
                         </div>
                         <div className="footer-actions">
-                            <button className="cta-button" onClick={() => handleSaveNote(noteContent)} disabled={isSaving || !isDirty}>
-                                Save
-                            </button>
                             <Link href="/dashboard" className="details-link">Exit Lab</Link>
                         </div>
                     </div>
@@ -165,8 +158,6 @@ export default function AgentLabPage() {
 export async function getServerSideProps(context) {
     const { botId } = context.params;
     const bot = chatbotData.find(b => b.id === botId) || null;
-    if (!bot) {
-        return { notFound: true };
-    }
+    if (!bot) return { notFound: true };
     return { props: { bot } };
 }

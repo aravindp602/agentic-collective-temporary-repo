@@ -12,6 +12,7 @@ import { motion, AnimatePresence, LayoutGroup, useAnimation, animate } from 'fra
 import useMagneticEffect from '../hooks/useMagneticEffect';
 import { TypeAnimation } from 'react-type-animation';
 import confetti from 'canvas-confetti';
+import useOS from '../hooks/useOS'; // <-- IMPORT THE NEW HOOK
 
 // --- "Living" Favorite Button ---
 const FavoriteButton = ({ isFavorite, onClick }) => {
@@ -69,6 +70,7 @@ export default function HomePage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const gridRef = useRef(null);
+    const { isMac } = useOS(); // <-- Call the hook to get OS info
 
     useEffect(() => {
         setFilteredBots(chatbotData);
@@ -146,7 +148,13 @@ export default function HomePage() {
                     <section id="gallery" className="chatbot-gallery-section">
                         <div className="container">
                             <div className="search-and-filters fade-in-on-scroll is-visible">
-                                <div className="search-bar-wrapper"><input type="text" className="search-input" placeholder="Search for an agent..." value={searchTerm} onChange={handleSearchChange}/></div>
+                                <div className="search-bar-wrapper">
+                                    <input type="text" className="search-input" placeholder="Search for an agent..." value={searchTerm} onChange={handleSearchChange}/>
+                                    <div className="kbd-hint">
+                                        <kbd>{isMac ? '⌘' : 'Ctrl'}</kbd>
+                                        <kbd>K</kbd>
+                                    </div>
+                                </div>
                                 <div className="category-filters-enhanced">
                                     <LayoutGroup id="filter-highlight">
                                         <button onClick={handleFilterKeyChange('*')} className={`filter-btn-enhanced ${filterKey === '*' ? 'active' : ''}`}>
@@ -168,22 +176,31 @@ export default function HomePage() {
                             <LayoutGroup>
                                 <motion.div layout className="chatbot-grid" ref={gridRef}>
                                     <AnimatePresence>
-                                        {isLoading ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />) : filteredBots.map((bot) => (
-                                            <motion.div layout key={bot.id} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.3, ease: 'easeInOut' }}>
-                                                <Link href={`/agent/${bot.id}`} className="agent-card-link">
-                                                    <div className="chatbot-card" data-tilt>
-                                                        <FavoriteButton isFavorite={favorites.includes(bot.id.toString())} onClick={(e) => toggleFavorite(bot.id, e)} />
+                                        {isLoading ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />) : filteredBots.map((bot) => {
+                                            const isFavorite = favorites.includes(bot.id.toString());
+                                            return (
+                                                <Link href={`/agent/${bot.id}`} key={bot.id} className="agent-card-link">
+                                                    <motion.div className="chatbot-card" data-tilt layoutId={`card-container-${bot.id}`}>
+                                                        <FavoriteButton isFavorite={isFavorite} onClick={(e) => toggleFavorite(bot.id, e)} />
                                                         {bot.isNew && <span className="card-badge new">New</span>}
                                                         {bot.popularity > 95 && <span className="card-badge popular">Popular</span>}
                                                         <div className="card-content">
-                                                            <div className="card-header"><div className="card-icon-wrapper"><img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" /></div><h3>{bot.name}</h3></div>
+                                                            <div className="card-header">
+                                                                <motion.div className="card-icon-wrapper" layoutId={`card-icon-${bot.id}`}>
+                                                                    <img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" />
+                                                                </motion.div>
+                                                                <motion.h3 layoutId={`card-title-${bot.id}`}>{bot.name}</motion.h3>
+                                                            </div>
                                                             <p className="card-description">{bot.description}</p>
-                                                            <div className="card-footer"><span className="details-link">View Details</span><span className="launch-link">Launch &rarr;</span></div>
+                                                            <div className="card-footer">
+                                                                <span className="details-link">View Details</span>
+                                                                <span className="launch-link">Launch &rarr;</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    </motion.div>
                                                 </Link>
-                                            </motion.div>
-                                        ))}
+                                            );
+                                        })}
                                     </AnimatePresence>
                                 </motion.div>
                             </LayoutGroup>

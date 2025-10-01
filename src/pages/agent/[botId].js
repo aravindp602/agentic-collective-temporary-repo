@@ -6,15 +6,14 @@ import { chatbotData } from '../../data/bots';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-// This is the main component for the agent page
 export default function AgentPage({ bot }) {
     if (!bot) {
-        // Fallback for safety, though getServerSideProps should handle this
         return (
             <Layout>
                 <div className="agent-page-container container">
                     <h1>Agent Not Found</h1>
                     <p>The agent you are looking for does not exist or may have been moved.</p>
+                    <Link href="/">← Back to Explore</Link>
                 </div>
             </Layout>
         );
@@ -25,28 +24,21 @@ export default function AgentPage({ bot }) {
     return (
         <Layout>
             <Head>
-                {/* --- SEO META TAGS --- */}
                 <title>{bot.name} | Agentic Collective</title>
                 <meta name="description" content={bot.description} />
-                {/* Open Graph tags for social sharing */}
                 <meta property="og:title" content={`${bot.name} | Agentic Collective`} />
                 <meta property="og:description" content={bot.description} />
                 <meta property="og:type" content="website" />
             </Head>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-            >
-                <div className="agent-page-container container">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                <motion.div className="agent-page-container container" layoutId={`card-container-${bot.id}`}>
                     <header className="agent-page-header">
-                        <div className="card-icon-wrapper large-icon">
+                        <motion.div className="card-icon-wrapper large-icon" layoutId={`card-icon-${bot.id}`}>
                             <img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" />
-                        </div>
+                        </motion.div>
                         <div className="agent-header-content">
-                            <h1>{bot.name}</h1>
+                            <motion.h1 layoutId={`card-title-${bot.id}`}>{bot.name}</motion.h1>
                             <span className="agent-category-tag">{bot.category}</span>
                         </div>
                     </header>
@@ -67,14 +59,12 @@ export default function AgentPage({ bot }) {
 
                         <aside className="agent-sidebar">
                             <div className="sidebar-card">
-                                <Link href={`/lab/${bot.id}`} className="cta-button">
+                                <Link href={`/lab/${bot.id}`} className="cta-button lab-button">
                                     Open in Agent Lab
                                 </Link>
-                                
                                 <Link href={launchUrl} className="cta-button fullscreen-button" target="_blank">
                                     Launch Fullscreen
                                 </Link>
-                                
                                 <div className="detail-item">
                                     <h4>Complexity</h4>
                                     <div className="complexity-meter">
@@ -83,7 +73,6 @@ export default function AgentPage({ bot }) {
                                         ))}
                                     </div>
                                 </div>
-                                
                                 {bot.relatedAgents && bot.relatedAgents.length > 0 && (
                                     <div className="detail-item">
                                         <h4>Related Agents</h4>
@@ -99,30 +88,17 @@ export default function AgentPage({ bot }) {
                             </div>
                         </aside>
                     </div>
-                </div>
+                </motion.div>
             </motion.div>
         </Layout>
     );
 }
 
-// --- SERVER-SIDE DATA FETCHING ---
 export async function getServerSideProps(context) {
     const { botId } = context.params;
-
-    // Find the bot data from your local file
     const bot = chatbotData.find(b => b.id === botId) || null;
-
-    // If no bot is found, return a 404 page
     if (!bot) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
-
-    // Pass the bot data as props to the page component
-    return {
-        props: {
-            bot,
-        },
-    };
+    return { props: { bot } };
 }
