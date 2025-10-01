@@ -11,14 +11,12 @@ import { motion } from 'framer-motion';
 import ProfileSection from '../components/ProfileSection';
 import UsageStats from '../components/UsageStats';
 import AccountManagement from '../components/AccountManagement';
-import toast from 'react-hot-toast'; // Import toast
+import EmptyFavorites from '../components/EmptyFavorites';
 
 export default function DashboardPage() {
     const { data: session, status } = useSession(); 
     const router = useRouter();
     const [favoriteBots, setFavoriteBots] = useState([]);
-    
-    // --- NEW STATE FOR THE NOTES WORKSPACE ---
     const [activeBotId, setActiveBotId] = useState(null);
     const [notes, setNotes] = useState({});
     const [currentNoteContent, setCurrentNoteContent] = useState('');
@@ -36,10 +34,8 @@ export default function DashboardPage() {
         setFavoriteBots(userFavorites);
     }, []);
 
-    // --- FUNCTION TO HANDLE CLICKING AN AGENT ---
     const handleBotClick = async (botId) => {
         if (activeBotId === botId) {
-            // If clicking the same bot, close it
             setActiveBotId(null);
             return;
         }
@@ -47,14 +43,12 @@ export default function DashboardPage() {
         setActiveBotId(botId);
         setIsLoadingNote(true);
 
-        // Check if we already fetched the note
         if (notes[botId]) {
             setCurrentNoteContent(notes[botId].content);
             setIsLoadingNote(false);
             return;
         }
 
-        // Fetch the note from the API
         try {
             const response = await fetch(`/api/notes/${botId}`);
             if (response.ok) {
@@ -70,7 +64,6 @@ export default function DashboardPage() {
         }
     };
 
-    // --- FUNCTION TO SAVE THE NOTE ---
     const handleSaveNote = async () => {
         const toastId = toast.loading('Saving note...');
         try {
@@ -82,7 +75,6 @@ export default function DashboardPage() {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);
             
-            // Update local state to match saved data
             setNotes(prev => ({ ...prev, [activeBotId]: { content: data.note.content } }));
             toast.success('Note saved!', { id: toastId });
         } catch (error) {
@@ -90,14 +82,28 @@ export default function DashboardPage() {
         }
     };
 
-    if (status === "loading" || !session) { /* ... loading spinner ... */ }
+    if (status === "loading" || !session) {
+        return (
+            <div className="full-page-message-wrapper">
+                <div className="loading-page">Authenticating...</div>
+            </div>
+        );
+    }
   
     return (
         <Layout>
-            <Head><title>Your Dashboard | Agentic Collective</title></Head>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+            <Head>
+                <title>Your Dashboard | Agentic Collective</title>
+            </Head>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+            >
                 <div className="container">
                     <ProfileSection />
+                    
                     <div className="dashboard-grid-layout">
                         <div className="dashboard-main-column">
                             <section className="dashboard-section">
@@ -139,7 +145,7 @@ export default function DashboardPage() {
                                             );
                                         })
                                     ) : (
-                                        <div className="placeholder-text">Your favorite agents will appear here.</div>
+                                        <EmptyFavorites />
                                     )}
                                 </div>
                             </section>
