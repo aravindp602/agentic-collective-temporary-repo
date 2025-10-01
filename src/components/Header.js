@@ -46,12 +46,14 @@ export default function Header({ theme, toggleTheme }) {
             <span>Agentic Collective</span>
           </Link>
           
-          {/* --- DESKTOP VIEW --- */}
-          <div className="desktop-header-content">
-            <nav className="desktop-nav">
-              <Link href="/" className={router.pathname === '/' ? 'is-active' : ''}>Explore</Link>
-              {isLoggedIn && (<Link href="/dashboard" className={router.pathname === '/dashboard' ? 'is-active' : ''}>Dashboard</Link>)}
-            </nav>
+          {/* This nav is now a direct child, making it easy to hide */}
+          <nav className="desktop-nav">
+            <Link href="/" className={router.pathname === '/' ? 'is-active' : ''}>Explore</Link>
+            {isLoggedIn && (<Link href="/dashboard" className={router.pathname === '/dashboard' ? 'is-active' : ''}>Dashboard</Link>)}
+          </nav>
+
+          <div className="header-controls">
+            {/* The action buttons are now grouped together */}
             <div className="header-actions">
               <button onClick={toggleTheme} className="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
                   {theme === 'light-mode' ? ( <span className="sun-icon">☀️</span> ) : ( <span className="moon-icon">🌙</span> )}
@@ -74,24 +76,22 @@ export default function Header({ theme, toggleTheme }) {
                 ) : (<button onClick={() => signIn()} className="signin-btn">Sign In</button>)}
               </div>
             </div>
-          </div>
 
-          {/* --- MOBILE VIEW --- */}
-          <div className="mobile-header-content">
-            <button className={`hamburger-btn ${isMobileMenuOpen ? 'is-open' : ''}`} onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle menu">
-              <span className="hamburger-icon"></span>
-            </button>
+            {/* The hamburger is separate, for mobile only */}
+            <div className="mobile-menu-toggle">
+              <button className={`hamburger-btn ${isMobileMenuOpen ? 'is-open' : ''}`} onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle menu">
+                <span className="hamburger-icon"></span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* The slide-out mobile navigation panel */}
       <div className={`mobile-nav ${isMobileMenuOpen ? 'is-open' : ''}`}>
         <nav>
           <Link href="/">Explore</Link>
           {isLoggedIn && (<Link href="/dashboard">Dashboard</Link>)}
         </nav>
-        {/* We can even put the auth controls here for mobile */}
         <div className="mobile-nav-footer">
             {isLoggedIn ? (
                 <button onClick={() => signOut({ callbackUrl: '/' })} className="cta-button">Sign Out</button>
