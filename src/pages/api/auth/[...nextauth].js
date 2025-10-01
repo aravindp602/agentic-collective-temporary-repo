@@ -37,32 +37,32 @@ export const authOptions = {
     })
   ],
 
-  // Use the stateless JWT strategy
   session: {
     strategy: "jwt",
   },
 
-  // This callback is essential for putting the user's ID and image into the token,
-  // and for handling manual session updates.
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      // Handle the trigger for session updates (e.g., after profile picture change)
-      if (trigger === "update" && session) {
-        if (session.name) token.name = session.name;
-        if (session.image) token.picture = session.image;
+      // Add user role to the token
+      if (trigger === "update" && session?.role) {
+        token.role = session.role;
       }
-
-      // Handle the initial sign-in
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
+      if (trigger === "update" && session?.image) {
+        token.picture = session.image;
+      }
       if (user) {
         token.id = user.id;
-        token.picture = user.image;
-        token.name = user.name;
+        token.role = user.role; // Add role on initial sign-in
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
+        session.user.role = token.role; // Add role to the session object
         session.user.image = token.picture;
         session.user.name = token.name;
       }

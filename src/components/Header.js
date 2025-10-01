@@ -43,7 +43,7 @@ export default function Header({ theme, toggleTheme }) {
         <div className="container header-container">
           <Link href="/" className="logo">
             <Image src="/logo.svg" alt="Agentic Collective Logo" width={40} height={40} priority />
-            <span>Agentic Collective</span>
+            <span>Digital Lesson</span>
           </Link>
           
           {/* This nav is now a direct child, making it easy to hide */}
