@@ -3080,3 +3080,28 @@ body.dark-mode .save-status.saved {
     color: inherit;
     font-weight: 700;
 }
+
+
+
+/*
+================================================
+FINAL UI/UX POLISH - LIVE AVATARS
+================================================
+*/
+.card-icon-wrapper {
+    padding: 8px;
+    overflow: hidden;
+    color: var(--text-secondary-light);
+}
+body.dark-mode .card-icon-wrapper {
+    color: var(--text-secondary-dark);
+}
+.card-icon-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--border-light);
+}
+body.dark-mode .card-icon-placeholder {
+    background-color: var(--border-dark);
+}

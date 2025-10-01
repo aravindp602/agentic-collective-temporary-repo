@@ -13,6 +13,7 @@ import useMagneticEffect from '../hooks/useMagneticEffect';
 import { TypeAnimation } from 'react-type-animation';
 import confetti from 'canvas-confetti';
 import useOS from '../hooks/useOS'; // <-- IMPORT THE NEW HOOK
+import AgentIcon from '../components/AgentIcon';
 
 // --- "Living" Favorite Button ---
 const FavoriteButton = ({ isFavorite, onClick }) => {
@@ -63,12 +64,14 @@ const AnimatedCounter = ({ value }) => {
 // Shaped skeleton loading card
 const SkeletonCard = () => ( <div className="chatbot-card is-loading"><div className="card-content"><div className="card-header"><div className="skeleton skeleton-icon"></div><div className="skeleton-header-text"><div className="skeleton skeleton-title"></div></div></div><div className="skeleton skeleton-text"></div><div className="skeleton skeleton-text skeleton-text-short"></div><div className="card-footer"><div className="skeleton skeleton-button"></div><div className="skeleton skeleton-button"></div></div></div></div> );
 
+
 export default function HomePage() {
     const [filteredBots, setFilteredBots] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [filterKey, setFilterKey] = useState('*');
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [hoveredCard, setHoveredCard] = useState(null);
     const gridRef = useRef(null);
     const { isMac } = useOS(); // <-- Call the hook to get OS info
 
@@ -180,14 +183,20 @@ export default function HomePage() {
                                             const isFavorite = favorites.includes(bot.id.toString());
                                             return (
                                                 <Link href={`/agent/${bot.id}`} key={bot.id} className="agent-card-link">
-                                                    <motion.div className="chatbot-card" data-tilt layoutId={`card-container-${bot.id}`}>
+                                                    <motion.div 
+                                                        className="chatbot-card" 
+                                                        data-tilt 
+                                                        layoutId={`card-container-${bot.id}`}
+                                                        onMouseEnter={() => setHoveredCard(bot.id)}
+                                                        onMouseLeave={() => setHoveredCard(null)}
+                                                    >
                                                         <FavoriteButton isFavorite={isFavorite} onClick={(e) => toggleFavorite(bot.id, e)} />
                                                         {bot.isNew && <span className="card-badge new">New</span>}
                                                         {bot.popularity > 95 && <span className="card-badge popular">Popular</span>}
                                                         <div className="card-content">
                                                             <div className="card-header">
                                                                 <motion.div className="card-icon-wrapper" layoutId={`card-icon-${bot.id}`}>
-                                                                    <img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" />
+                                                                    <AgentIcon category={bot.category} />
                                                                 </motion.div>
                                                                 <motion.h3 layoutId={`card-title-${bot.id}`}>{bot.name}</motion.h3>
                                                             </div>

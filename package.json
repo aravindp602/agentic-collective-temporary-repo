@@ -24,6 +24,7 @@
     "framer-motion": "^12.23.22",
     "gsap": "^3.13.0",
     "isotope-layout": "^3.0.6",
+    "lottie-react": "^2.4.1",
     "next": "^14.2.33",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",

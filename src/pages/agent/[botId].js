@@ -1,10 +1,10 @@
 // src/pages/agent/[botId].js
-
 import Head from 'next/head';
 import Layout from '../../components/Layout';
 import { chatbotData } from '../../data/bots';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import AgentIcon from '../../components/AgentIcon';
 
 export default function AgentPage({ bot }) {
     if (!bot) {
@@ -30,19 +30,17 @@ export default function AgentPage({ bot }) {
                 <meta property="og:description" content={bot.description} />
                 <meta property="og:type" content="website" />
             </Head>
-
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                 <motion.div className="agent-page-container container" layoutId={`card-container-${bot.id}`}>
                     <header className="agent-page-header">
                         <motion.div className="card-icon-wrapper large-icon" layoutId={`card-icon-${bot.id}`}>
-                            <img src={bot.icon} alt={`${bot.name} icon`} className="card-icon" />
+                            <AgentIcon category={bot.category} />
                         </motion.div>
                         <div className="agent-header-content">
                             <motion.h1 layoutId={`card-title-${bot.id}`}>{bot.name}</motion.h1>
                             <span className="agent-category-tag">{bot.category}</span>
                         </div>
                     </header>
-
                     <div className="agent-page-body">
                         <div className="agent-main-content">
                             <div className="content-section">
@@ -56,33 +54,18 @@ export default function AgentPage({ bot }) {
                                 </div>
                             </div>
                         </div>
-
                         <aside className="agent-sidebar">
                             <div className="sidebar-card">
-                                <Link href={`/lab/${bot.id}`} className="cta-button lab-button">
-                                    Open in Agent Lab
-                                </Link>
-                                <Link href={launchUrl} className="cta-button fullscreen-button" target="_blank">
-                                    Launch Fullscreen
-                                </Link>
+                                <Link href={`/lab/${bot.id}`} className="cta-button lab-button">Open in Agent Lab</Link>
+                                <Link href={launchUrl} className="cta-button fullscreen-button" target="_blank">Launch Fullscreen</Link>
                                 <div className="detail-item">
                                     <h4>Complexity</h4>
-                                    <div className="complexity-meter">
-                                        {[...Array(5)].map((_, i) => (
-                                            <span key={i} className={`bar ${i < bot.complexity ? 'filled' : ''}`}></span>
-                                        ))}
-                                    </div>
+                                    <div className="complexity-meter">{[...Array(5)].map((_, i) => (<span key={i} className={`bar ${i < bot.complexity ? 'filled' : ''}`}></span>))}</div>
                                 </div>
                                 {bot.relatedAgents && bot.relatedAgents.length > 0 && (
                                     <div className="detail-item">
                                         <h4>Related Agents</h4>
-                                        <div className="related-agents-list">
-                                            {bot.relatedAgents.map(relatedId => {
-                                                const relatedBot = chatbotData.find(b => b.id === relatedId);
-                                                if (!relatedBot) return null;
-                                                return <Link key={relatedId} href={`/agent/${relatedId}`} className="related-agent">{relatedBot.name}</Link>;
-                                            })}
-                                        </div>
+                                        <div className="related-agents-list">{bot.relatedAgents.map(relatedId => { const relatedBot = chatbotData.find(b => b.id === relatedId); if (!relatedBot) return null; return <Link key={relatedId} href={`/agent/${relatedId}`} className="related-agent">{relatedBot.name}</Link>; })}</div>
                                     </div>
                                 )}
                             </div>
@@ -97,8 +80,6 @@ export default function AgentPage({ bot }) {
 export async function getServerSideProps(context) {
     const { botId } = context.params;
     const bot = chatbotData.find(b => b.id === botId) || null;
-    if (!bot) {
-        return { notFound: true };
-    }
+    if (!bot) return { notFound: true };
     return { props: { bot } };
 }
