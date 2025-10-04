@@ -87,12 +87,12 @@ export default function LoginPage() {
   if (status === "unauthenticated") {
     return (
       <>
-        <Head><title>Sign In | Agentic Collective</title></Head>
+        <Head><title>Sign In | Digital Lesson</title></Head>
         <canvas ref={canvasRef} className="interactive-background"></canvas>
         <div className="auth-container">
           <div className="auth-box">
             <div className="auth-box-content">
-                <Link href="/" className="logo anim-fade-in" style={{ animationDelay: '0.1s' }}>Agentic Collective</Link>
+                <Link href="/" className="logo anim-fade-in" style={{ animationDelay: '0.1s' }}>Digital Lesson</Link>
                 <h1 className="anim-fade-in" style={{ animationDelay: '0.2s' }}>Welcome Back</h1>
                 <p className="anim-fade-in" style={{ animationDelay: '0.3s' }}>Sign in to unlock your AI workforce.</p>
                 <div className="social-logins anim-fade-in" style={{ animationDelay: '0.4s' }}>

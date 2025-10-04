@@ -177,6 +177,7 @@ export const chatbotData = [
     complexity: 4,
     relatedAgents: ['Clarity-Compass'],
   },
+
 ];
 
 export const categoriesWithIcons = [
