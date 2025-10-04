@@ -59,7 +59,7 @@ export const chatbotData = [
     icon : '/logo.svg',
     description : 'An AI-powered creative director that helps brainstorm and refine creative concepts.',
     embedType : 'iframe',
-    embedUrl : 'https://workflow.getmindpal.com/creative-strategy-canvas-kwOzZWvzc9nHPf0o',
+    embedUrl : 'https://workflow.getmindpal.com/creative-strategy-canvas-kwozzwvzc9nhpf0o',
     isNew: true, 
     useCaseTags: ['Brainstorming', 'Campaigns', 'Content Creation'],
     complexity: 5,
