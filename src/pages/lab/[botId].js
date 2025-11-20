@@ -26,6 +26,9 @@ export default function AgentLabPage() {
     const [showTooltip, setShowTooltip] = useState(false);
     const { data: session, status } = useSession();
     
+    // NEW state for Google Drive feature
+    const [isSavingToDrive, setIsSavingToDrive] = useState(false);
+
     const debouncedNoteContent = useDebounce(noteContent, 2000);
     const isInitialMount = useRef(true);
 
@@ -82,6 +85,46 @@ export default function AgentLabPage() {
     const dismissTooltip = () => {
         setShowTooltip(false);
         localStorage.setItem('hasSeenLabTooltip', 'true');
+    };
+
+    // NEW handler function for saving to Google Drive
+    const handleSaveToDrive = async () => {
+        if (!noteContent.trim()) {
+            toast.error("Your note is empty!");
+            return;
+        }
+
+        setIsSavingToDrive(true);
+        const toastId = toast.loading('Saving to Google Drive...');
+
+        try {
+            const response = await fetch('/api/actions/save-to-drive', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ noteContent, botName: bot.name }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message);
+
+            toast.success(
+                (t) => (
+                    <span style={{ textAlign: 'center' }}>
+                        Note saved!
+                        <a href={data.driveLink} target="_blank" rel="noopener noreferrer" 
+                           style={{ color: '#cf3222', textDecoration: 'underline', marginLeft: '8px' }}>
+                            Open in Drive
+                        </a>
+                    </span>
+                ), 
+                { id: toastId, duration: 8000 }
+            );
+
+        } catch (error) {
+            toast.error(error.message || 'Failed to save.', { id: toastId });
+        } finally {
+            setIsSavingToDrive(false);
+        }
     };
 
     const getSaveStatus = () => {
@@ -145,9 +188,19 @@ export default function AgentLabPage() {
                         <div className={`save-status ${!isDirty && !isSaving ? 'saved' : ''}`}>
                             {getSaveStatus()}
                         </div>
+                        {/* START OF MODIFICATION */}
                         <div className="footer-actions">
+                             <button 
+                                className="details-link" 
+                                onClick={handleSaveToDrive} 
+                                disabled={isSavingToDrive || session?.user?.provider !== 'google'}
+                                title={session?.user?.provider !== 'google' ? "Sign in with Google to use this feature" : "Save notes to Google Drive"}
+                            >
+                                {isSavingToDrive ? 'Saving...' : 'Save to Drive'}
+                            </button>
                             <Link href="/dashboard" className="details-link">Exit Lab</Link>
                         </div>
+                        {/* END OF MODIFICATION */}
                     </div>
                 </div>
             </div>

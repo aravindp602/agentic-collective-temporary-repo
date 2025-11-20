@@ -16,6 +16,20 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // START OF MODIFICATION
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+          scope: [
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/drive.file" // Request permission to create files
+          ].join(" "),
+        },
+      },
+      // END OF MODIFICATION
     }),
     GithubProvider({
       clientId: process.env.GITHUB_ID,
@@ -42,7 +56,7 @@ export const authOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, account, trigger, session }) { // Add 'account' here
       // Add user role to the token
       if (trigger === "update" && session?.role) {
         token.role = session.role;
@@ -57,6 +71,10 @@ export const authOptions = {
         token.id = user.id;
         token.role = user.role; // Add role on initial sign-in
       }
+      // This adds the provider (e.g., 'google') to the token
+      if (account) {
+        token.provider = account.provider;
+      }
       return token;
     },
     async session({ session, token }) {
@@ -65,6 +83,7 @@ export const authOptions = {
         session.user.role = token.role; // Add role to the session object
         session.user.image = token.picture;
         session.user.name = token.name;
+        session.user.provider = token.provider; // Pass provider to the session
       }
       return session;
     },

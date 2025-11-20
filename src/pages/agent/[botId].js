@@ -5,8 +5,12 @@ import { chatbotData } from '../../data/bots';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import AgentIcon from '../../components/AgentIcon';
+import { useRouter } from 'next/router'; // Import useRouter
+import SocialShareButtons from '../../components/SocialShareButtons'; // Import our new component
 
 export default function AgentPage({ bot }) {
+    const router = useRouter(); // Initialize router
+
     if (!bot) {
         return (
             <Layout>
@@ -19,6 +23,9 @@ export default function AgentPage({ bot }) {
         );
     }
 
+    // Construct the full URL to be shared
+    const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}${router.asPath}`;
+    const shareTitle = `Check out the "${bot.name}" agent on Digital Lesson!`;
     const launchUrl = bot.embedType === 'iframe' ? `/embed/${bot.id}` : `/chat/${bot.id}`;
 
     return (
@@ -58,6 +65,17 @@ export default function AgentPage({ bot }) {
                             <div className="sidebar-card">
                                 <Link href={`/lab/${bot.id}`} className="cta-button lab-button">Open in Agent Lab</Link>
                                 <Link href={launchUrl} className="cta-button fullscreen-button" target="_blank">Launch Fullscreen</Link>
+                                
+                                {/* START OF MODIFICATION */}
+                                <div className="detail-item" style={{ marginTop: '24px' }}>
+                                    <h4>Share this Agent</h4>
+                                    <SocialShareButtons 
+                                        shareUrl={shareUrl}
+                                        title={shareTitle}
+                                    />
+                                </div>
+                                {/* END OF MODIFICATION */}
+
                                 <div className="detail-item">
                                     <h4>Complexity</h4>
                                     <div className="complexity-meter">{[...Array(5)].map((_, i) => (<span key={i} className={`bar ${i < bot.complexity ? 'filled' : ''}`}></span>))}</div>
