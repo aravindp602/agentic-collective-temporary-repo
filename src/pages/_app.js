@@ -2,6 +2,7 @@
 
 import '../styles/style.css';
 import '../styles/auth.css';
+import '../styles/lab.css';
 import { SessionProvider } from "next-auth/react";
 import { AnimatePresence } from 'framer-motion'; // <-- IMPORT
 import { useRouter } from 'next/router';

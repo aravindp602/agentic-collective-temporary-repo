@@ -1,0 +1,174 @@
+/* src/styles/lab.css */
+
+/* ================================================
+   PROFESSIONAL AGENT LAB UI (with Logo Header)
+   ================================================ */
+
+/* --- Main Layout --- */
+.agent-lab-layout {
+    display: grid;
+    grid-template-columns: 1fr 500px;
+    margin-top: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.lab-iframe-panel {
+    height: 100%;
+}
+
+.lab-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* --- Sidebar --- */
+.lab-sidebar {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--card-bg-light);
+    border-left: 1px solid var(--border-light);
+}
+body.dark-mode .lab-sidebar {
+    background-color: var(--card-bg-dark);
+    border-left-color: var(--border-dark);
+}
+
+/* --- NEW: Logo Header Style --- */
+.lab-logo-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+}
+body.dark-mode .lab-logo-header {
+    border-bottom-color: var(--border-dark);
+}
+
+.lab-sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+}
+body.dark-mode .lab-sidebar-header {
+    border-bottom-color: var(--border-dark);
+}
+.lab-sidebar-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-primary-light);
+}
+body.dark-mode .lab-sidebar-header h3 {
+    color: var(--text-primary-dark);
+}
+.lab-sidebar-header p {
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary-light);
+}
+body.dark-mode .lab-sidebar-header p {
+    color: var(--text-secondary-dark);
+}
+
+/* --- Tab System --- */
+.lab-tabs {
+    display: flex;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+    gap: 16px;
+}
+body.dark-mode .lab-tabs {
+    border-bottom-color: var(--border-dark);
+}
+
+.tab-btn {
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 16px 4px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    color: var(--text-secondary-light);
+    transition: all 0.2s ease;
+}
+body.dark-mode .tab-btn {
+    color: var(--text-secondary-dark);
+}
+
+.tab-btn:hover {
+    color: var(--text-primary-light);
+}
+body.dark-mode .tab-btn:hover {
+    color: var(--text-primary-dark);
+}
+
+.tab-btn.active {
+    color: var(--brand-color);
+    border-bottom-color: var(--brand-color);
+}
+
+/* --- Tab Content --- */
+.lab-tab-content {
+    flex-grow: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.lab-tab-content .form-field {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.lab-tab-content .form-field label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.lab-tab-content textarea,
+.lab-tab-content .EasyMDEContainer {
+    width: 100%;
+    flex-grow: 1;
+}
+.lab-tab-content .EasyMDEContainer .CodeMirror {
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+}
+body.dark-mode .lab-tab-content .EasyMDEContainer .CodeMirror {
+    border-color: var(--border-dark);
+}
+
+/* --- Footer --- */
+.lab-sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-light);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+body.dark-mode .lab-sidebar-footer {
+    border-top-color: var(--border-dark);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .agent-lab-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 50vh 50vh;
+        height: auto;
+    }
+    .lab-sidebar {
+        border-left: none;
+        border-top: 1px solid var(--border-dark);
+    }
+}
