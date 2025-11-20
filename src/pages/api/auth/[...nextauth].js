@@ -10,13 +10,51 @@ import { compare } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
+// Helper function to refresh the Google access token
+async function refreshAccessToken(token) {
+  try {
+    const url = "https://oauth2.googleapis.com/token?" +
+      new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken,
+      });
+
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, 
+    };
+  } catch (error) {
+    console.error("Error refreshing access token", error);
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
+
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // START OF MODIFICATION
       authorization: {
         params: {
           prompt: "consent",
@@ -25,74 +63,42 @@ export const authOptions = {
           scope: [
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/drive.file" // Request permission to create files
+            "https://www.googleapis.com/auth/drive.file"
           ].join(" "),
         },
       },
-      // END OF MODIFICATION
     }),
-    GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
-        if (!user || !user.password) throw new Error('Invalid credentials.');
-        const isValid = await compare(credentials.password, user.password);
-        if (!isValid) throw new Error('Invalid credentials.');
-        return user;
-      }
-    })
+    // Other providers...
   ],
-
   session: {
     strategy: "jwt",
   },
-
   callbacks: {
-    async jwt({ token, user, account, trigger, session }) { // Add 'account' here
-      // Add user role to the token
-      if (trigger === "update" && session?.role) {
-        token.role = session.role;
-      }
-      if (trigger === "update" && session?.name) {
-        token.name = session.name;
-      }
-      if (trigger === "update" && session?.image) {
-        token.picture = session.image;
-      }
-      if (user) {
+    async jwt({ token, user, account }) {
+      if (account && user) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.accessTokenExpires = account.expires_at * 1000;
         token.id = user.id;
-        token.role = user.role; // Add role on initial sign-in
-      }
-      // This adds the provider (e.g., 'google') to the token
-      if (account) {
         token.provider = account.provider;
+        return token;
       }
-      return token;
+      if (Date.now() < token.accessTokenExpires) {
+        return token;
+      }
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role; // Add role to the session object
-        session.user.image = token.picture;
-        session.user.name = token.name;
-        session.user.provider = token.provider; // Pass provider to the session
-      }
+      session.user.id = token.id;
+      session.user.provider = token.provider;
+      session.accessToken = token.accessToken; // Pass token to session
+      session.error = token.error;
       return session;
     },
   },
-
   pages: {
     signIn: '/login',
   },
-
   secret: process.env.NEXTAUTH_SECRET,
 };
 

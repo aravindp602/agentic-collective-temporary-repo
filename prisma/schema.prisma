@@ -1,46 +1,49 @@
 // prisma/schema.prisma
 
 generator client {
-  provider        = "prisma-client-js"
-  // This feature is required for Vercel's connection pooling
-  previewFeatures = ["driverAdapters"] 
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  // Switch the provider to postgresql for production
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  accounts      Account[]
-  sessions      Session[]
-  passwordResetToken   String?   @unique
+  id                   String     @id @default(cuid())
+  name                 String?
+  email                String?    @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String?
+  accounts             Account[]
+  sessions             Session[]
+  passwordResetToken   String?    @unique
   passwordResetExpires DateTime?
-  notes Note[]
-  
+  notes                Note[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
-  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+
+  // --- THIS IS THE FIX ---
+  // Some OAuth providers (like Google) send this optional field.
+  // Adding it makes your schema compatible.
+  refresh_token_expires_in Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
 }
 
@@ -56,21 +59,19 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+
   @@unique([identifier, token])
 }
-
-
-// Add this to the end of prisma/schema.prisma
 
 model Note {
   id        String   @id @default(cuid())
   content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  botId     String   // The ID of the bot from your bots.js file
-  
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  botId     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, botId]) // Ensures a user can only have one note per bot
+  @@unique([userId, botId])
 }
+

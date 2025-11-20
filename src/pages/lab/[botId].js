@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import useDebounce from '../../hooks/useDebounce';
 import dynamic from 'next/dynamic';
 import LabLayout from '../../components/LabLayout';
+import SocialShareModal from '../../components/SocialShareModal';
 
 const SimpleMdeEditor = dynamic(() => import("react-simplemde-editor"), { ssr: false });
 import "easymde/dist/easymde.min.css";
@@ -18,24 +19,25 @@ export default function AgentLabPage() {
     const router = useRouter();
     const { botId } = router.query;
     const [bot, setBot] = useState(null);
+    
+    // --- State Management (Simplified) ---
     const [noteContent, setNoteContent] = useState('');
+    const [generatedContent, setGeneratedContent] = useState('');
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
-    const [isZenMode, setIsZenMode] = useState(false);
-    const [showTooltip, setShowTooltip] = useState(false);
-    const { data: session, status } = useSession();
     
-    // NEW state for Google Drive feature
     const [isSavingToDrive, setIsSavingToDrive] = useState(false);
+    // REMOVED: isSharingLink state is no longer needed.
 
+    const { data: session, status } = useSession();
     const debouncedNoteContent = useDebounce(noteContent, 2000);
     const isInitialMount = useRef(true);
 
+    // --- Data Fetching and Initialization ---
     useEffect(() => {
-        if (!localStorage.getItem('hasSeenLabTooltip')) {
-            setShowTooltip(true);
-        }
         if (botId) setBot(chatbotData.find(b => b.id === botId));
     }, [botId]);
 
@@ -56,7 +58,8 @@ export default function AgentLabPage() {
                 .finally(() => setIsLoading(false));
         }
     }, [session, bot]);
-    
+
+    // --- Handlers for Personal Notes (Bottom Section) ---
     const handleSaveNote = useCallback(async (contentToSave) => {
         if (!isDirty) return;
         setIsSaving(true);
@@ -66,7 +69,7 @@ export default function AgentLabPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: contentToSave }),
             });
-            if (!response.ok) throw new Error('Failed to save.');
+            if (!response.ok) throw new Error('Failed to save notes.');
             setIsDirty(false);
         } catch (error) { toast.error(error.message);
         } finally { setIsSaving(false); }
@@ -81,62 +84,54 @@ export default function AgentLabPage() {
         setNoteContent(value);
         setIsDirty(true);
     }, []);
-    
-    const dismissTooltip = () => {
-        setShowTooltip(false);
-        localStorage.setItem('hasSeenLabTooltip', 'true');
-    };
 
-    // NEW handler function for saving to Google Drive
-    const handleSaveToDrive = async () => {
-        if (!noteContent.trim()) {
-            toast.error("Your note is empty!");
+    // --- Handlers for Generated Content (Top Section) ---
+    const handleSaveContentToDrive = async () => {
+        if (!generatedContent.trim()) {
+            toast.error("Paste content from the chatbot first!");
             return;
         }
-
         setIsSavingToDrive(true);
-        const toastId = toast.loading('Saving to Google Drive...');
-
+        const toastId = toast.loading('Saving content to Google Drive...');
         try {
             const response = await fetch('/api/actions/save-to-drive', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ noteContent, botName: bot.name }),
+                body: JSON.stringify({ noteContent: generatedContent, botName: bot.name }),
             });
-
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);
-
             toast.success(
-                (t) => (
-                    <span style={{ textAlign: 'center' }}>
-                        Note saved!
-                        <a href={data.driveLink} target="_blank" rel="noopener noreferrer" 
-                           style={{ color: '#cf3222', textDecoration: 'underline', marginLeft: '8px' }}>
+                () => (
+                    <span>
+                        Content saved!{' '}
+                        <a href={data.driveLink} target="_blank" rel="noopener noreferrer" style={{color: '#cf3222', textDecoration: 'underline'}}>
                             Open in Drive
                         </a>
                     </span>
                 ), 
                 { id: toastId, duration: 8000 }
             );
-
         } catch (error) {
             toast.error(error.message || 'Failed to save.', { id: toastId });
         } finally {
             setIsSavingToDrive(false);
         }
     };
-
+    
+    // REMOVED: The handleGenerateShareLink function is no longer needed.
+    
+    // --- UI Helpers ---
     const getSaveStatus = () => {
-        if (isSaving) return <><span className="save-spinner"></span>Saving...</>;
-        if (isDirty) return 'Unsaved changes';
-        return <span className="saved-checkmark">✓ All changes saved</span>;
+        if (isSaving) return <><span className="save-spinner"></span>Saving notes...</>;
+        if (isDirty) return 'Unsaved changes in notes';
+        return <span className="saved-checkmark">✓ All notes saved</span>;
     };
-
+    
     const editorOptions = useMemo(() => ({
-        autofocus: true,
+        autofocus: false,
         spellChecker: false,
-        toolbar: ["bold", "italic", "strikethrough", "|", "code", "quote", "unordered-list", "ordered-list", "|", "preview"],
+        toolbar: ["bold", "italic", "|", "quote", "unordered-list", "ordered-list"],
         status: false,
     }), []);
 
@@ -147,34 +142,69 @@ export default function AgentLabPage() {
     return (
         <LabLayout>
             <Head>
-                <title>{bot.name} Lab | Agentic Collective</title>
+                <title>{bot.name} Lab | Digital Lesson</title>
                 <meta name="robots" content="noindex" />
             </Head>
+
+            {isShareModalOpen && (
+                <SocialShareModal
+                    content={generatedContent}
+                    botName={bot.name}
+                    onClose={() => setIsShareModalOpen(false)}
+                />
+            )}
+
             <div className="lab-top-bar">
                 <Link href="/dashboard" className="back-to-dashboard">
                     ← Back to Dashboard
                 </Link>
             </div>
-            <div className={`agent-lab-layout ${isZenMode ? 'zen-mode' : ''}`}>
+
+            <div className="agent-lab-layout">
                 <div className="lab-iframe-panel">
                     <iframe src={bot.embedUrl} title={bot.name} className="lab-iframe" allow="clipboard-read; clipboard-write; microphone"></iframe>
                 </div>
+                
                 <div className="lab-scratchpad-panel">
                     <div className="scratchpad-header">
                         <div className="header-text">
-                            <h3>Scratchpad</h3>
-                            <p>Your personal notes for <strong>{bot.name}</strong></p>
+                            <h3>Generated Content</h3>
+                            <p>Paste chatbot output here to share or save</p>
                         </div>
-                        <div className="zen-mode-wrapper">
-                            <button className="zen-mode-toggle" onClick={() => setIsZenMode(!isZenMode)} title="Toggle Focus Mode">
-                                {isZenMode ? 'Exit Focus' : 'Focus Mode'}
+                    </div>
+                    <div style={{ padding: '24px', borderBottom: '1px solid var(--border-dark)' }}>
+                        <textarea
+                            className="favorite-agent-workspace textarea"
+                            placeholder="1. Copy text from the agent on the left...&#10;2. Paste it here!"
+                            value={generatedContent}
+                            onChange={(e) => setGeneratedContent(e.target.value)}
+                            style={{ minHeight: '150px', maxHeight: '300px', width: '100%', boxSizing: 'border-box' }}
+                        />
+                        <div className="footer-actions" style={{ marginTop: '16px', justifyContent: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+                            <button 
+                                className="cta-button" 
+                                style={{padding: '8px 16px'}}
+                                onClick={() => setIsShareModalOpen(true)}
+                                disabled={!generatedContent.trim()}
+                            >
+                                Share Content
                             </button>
-                            {showTooltip && (
-                                <div className="onboarding-tooltip">
-                                    <button onClick={dismissTooltip} className="tooltip-close">×</button>
-                                    Click here for a distraction-free writing experience!
-                                </div>
-                            )}
+                            <button
+                                className="details-link"
+                                onClick={handleSaveContentToDrive}
+                                disabled={isSavingToDrive || session?.user?.provider !== 'google' || !generatedContent.trim()}
+                                title={session?.user?.provider !== 'google' ? "Sign in with Google to use this feature" : "Save content to Google Drive"}
+                            >
+                                {isSavingToDrive ? 'Saving...' : 'Save Content to Drive'}
+                            </button>
+                            {/* REMOVED: The "Get Share Link" button is now gone. */}
+                        </div>
+                    </div>
+                    
+                    <div className="scratchpad-header">
+                        <div className="header-text">
+                            <h3>Personal Scratchpad</h3>
+                            <p>Your private, auto-saving notes for <strong>{bot.name}</strong></p>
                         </div>
                     </div>
                     <div className="scratchpad-editor">
@@ -188,19 +218,9 @@ export default function AgentLabPage() {
                         <div className={`save-status ${!isDirty && !isSaving ? 'saved' : ''}`}>
                             {getSaveStatus()}
                         </div>
-                        {/* START OF MODIFICATION */}
                         <div className="footer-actions">
-                             <button 
-                                className="details-link" 
-                                onClick={handleSaveToDrive} 
-                                disabled={isSavingToDrive || session?.user?.provider !== 'google'}
-                                title={session?.user?.provider !== 'google' ? "Sign in with Google to use this feature" : "Save notes to Google Drive"}
-                            >
-                                {isSavingToDrive ? 'Saving...' : 'Save to Drive'}
-                            </button>
                             <Link href="/dashboard" className="details-link">Exit Lab</Link>
                         </div>
-                        {/* END OF MODIFICATION */}
                     </div>
                 </div>
             </div>
