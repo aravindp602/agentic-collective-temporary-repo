@@ -3105,3 +3105,23 @@ body.dark-mode .card-icon-wrapper {
 body.dark-mode .card-icon-placeholder {
     background-color: var(--border-dark);
 }
+
+
+/* ================================================
+   PPT Editor Modal Styles
+   ================================================ */
+
+.ppt-editor-sidebar {
+    background-color: var(--bg-color-light); /* A slightly off-white for light mode */
+    border-right: 1px solid var(--border-light);
+}
+
+body.dark-mode .ppt-editor-sidebar {
+    background-color: var(--bg-color-dark); /* The main page background for dark mode */
+    border-right: 1px solid var(--border-dark);
+}
+
+/* A small fix to make sure the delete button on the slide has the right color in light mode */
+body.light-mode .ppt-editor-sidebar button {
+    color: var(--text-primary-light);
+}
